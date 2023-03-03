@@ -150,12 +150,12 @@
 
 <script>
 
-	import NavDropdownComponent from './components/NavDropdownComponent'
-	import IconRouteComponent from './components/IconRouteComponent'
-	import IconLinkComponent from './components/IconLinkComponent'
-	import DisabledLinkComponent from './components/DisabledLinkComponent'
-	import DataTableComponent from './components/DataTableComponent'
-	import SelectPaginationComponent from './components/SelectPaginationComponent'
+	import NavDropdownComponent from './components/NavDropdownComponent.vue'
+	import IconRouteComponent from './components/IconRouteComponent.vue'
+	import IconLinkComponent from './components/IconLinkComponent.vue'
+	import DisabledLinkComponent from './components/DisabledLinkComponent.vue'
+	import DataTableComponent from './components/DataTableComponent.vue'
+	import SelectPaginationComponent from './components/SelectPaginationComponent.vue'
 	
 	export default {
 

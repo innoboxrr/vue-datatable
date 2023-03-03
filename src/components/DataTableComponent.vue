@@ -104,10 +104,10 @@
 
 <script>
 	
-	import NavDropdownComponent from './NavDropdownComponent'
-	import IconRouteComponent from './IconRouteComponent'
-	import IconLinkComponent from './IconLinkComponent'
-	import DisabledLinkComponent from './DisabledLinkComponent'
+	import NavDropdownComponent from './NavDropdownComponent.vue'
+	import IconRouteComponent from './IconRouteComponent.vue'
+	import IconLinkComponent from './IconLinkComponent.vue'
+	import DisabledLinkComponent from './DisabledLinkComponent.vue'
 
 	export default {
 
