@@ -1,0 +1,25 @@
+{
+  "name": "innoboxrr-vue-datatable",
+  "version": "1.0.0",
+  "description": "Datatable para vue3",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/innoboxrr/vue-datatable.git"
+  },
+  "keywords": [
+    "vue3",
+    "datatable",
+    "table",
+    "crud"
+  ],
+  "author": "Homero Raul Vargas Cruz",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/innoboxrr/vue-datatable/issues"
+  },
+  "homepage": "https://github.com/innoboxrr/vue-datatable#readme"
+}
