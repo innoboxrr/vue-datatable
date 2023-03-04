@@ -86,7 +86,7 @@
 								<a 
 						    		class="uk-text-right cursor" 
 						    		uk-toggle="target: .filter-form; animation: uk-animation-scale-up;"
-						    		:uk-tooltip="`title: Buscar">
+						    		uk-tooltip="title: Buscar">
 								
 									<i class="fas fa-sliders-h tools-icon"></i>
 								
@@ -296,8 +296,7 @@
 
 				handler(val, oldVal) {
 
-					if(!_.isEqual(val, oldVal)) 
-						this.updateFilters();
+					if(!_.isEqual(val, oldVal)) this.updateFilters();
 
 			    },
 
@@ -408,8 +407,7 @@
 
 			updateFilters() {
 
-				// permite las restricciones de consulta estén disponible en el estado global de la aplicación
-				this.$store.commit('admin/setCrudFilters', this.getFilters());
+				this.model.setFilters(this.getFilters());
 
 				this.fetchData();
 
@@ -449,19 +447,11 @@
 
 				this.model[action.callback](action.params).then( res => {
 
-					UIkit.notification({
-						message: res.message,
-						status: 'success'
-					});
-
 					this.updateFilters();
 
 				}).catch( error => {
 
-					UIkit.notification({
-						message: error.message,
-						status: 'danger'
-					});
+					console.error(error);
 
 				});
 
