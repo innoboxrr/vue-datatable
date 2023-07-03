@@ -8,7 +8,11 @@
 			    
 			    <li>
 			    
-			    	<span v-if="meta.total > 0">{{ 'Showing' }} {{ meta.from }} {{ 'to' }} {{ meta.to }} {{ 'of' }} {{ meta.total }} {{ 'entries' }}</span>
+			    	<span v-if="meta.total > 0">
+
+			    		{{ 'Showing' }} {{ meta.from }} {{ 'to' }} {{ meta.to }} {{ 'of' }} {{ meta.total }} {{ 'entries' }}
+
+			    	</span>
 
 			    	<span v-else>{{ ('No results found') }}</span>
 
@@ -36,7 +40,6 @@
 			    <li>
 			    	<select
 			    		class="uk-select"
-			    		@change="updatePage()"
 			    		v-model="current_page">
 
 			    		<option 
@@ -86,18 +89,24 @@
 
 		emits: ['updatePage'],
 
-		updated() {
-
-			this.current_page = this.meta.current_page;
-
-		},
-
 		data() {
 
 			return {
 
-				current_page: this.meta.current_page,
+				current_page: 1,
 				
+			}
+
+		},
+
+		watch: {
+
+			current_page(newVal, oldVal) {
+
+				this.current_page = newVal;
+
+				this.updatePage();
+
 			}
 
 		},

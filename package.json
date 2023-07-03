@@ -1,6 +1,6 @@
 {
   "name": "innoboxrr-vue-datatable",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Datatable para vue3",
   "main": "index.js",
   "scripts": {
