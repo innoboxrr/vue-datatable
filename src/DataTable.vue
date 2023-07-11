@@ -182,6 +182,11 @@
 				required: true
 			},
 
+			dataMethod: {
+				type: String,
+				default: 'post',
+			},
+
 			model: {
 				type: Object,
 				required: true
@@ -335,30 +340,40 @@
 			},
 
 			fetchData() {
+				
+				const requestData = {
 
-				axios.post(this.dataUrl, this.getFilters()).then( res => {
+					method: this.dataMethod,
+
+					url: this.dataUrl,
+
+					data: this.dataMethod === 'post' ? this.getFilters() : null,
+
+					params: this.dataMethod === 'get' ? this.getFilters() : null
+
+				};
+				
+				axios(requestData).then(res => {
 
 					this.fetchDataAttempts = 0;
 
 					this.dataTable.body = res.data.data;
-					
+
 					this.pagination.meta = res.data.meta;
 
 					this.pagination.links = res.data.links;
 
 				}).catch(error => {
 
-					console.log(error);
-
-					if(error.response.status == 403) { 
+					if (error.response.status === 403) {
 
 						// this.$router.push({name: "NotAuthorized" });
 
 					} else {
 
-						if(this.fetchDataAttempts <= 3) {
+						if (this.fetchDataAttempts <= 3) {
 
-							setTimeout( () => {
+							setTimeout(() => {
 
 								++this.fetchDataAttempts;
 
@@ -371,7 +386,6 @@
 					}
 
 				});
-
 			},
 
 			getFilters() {
