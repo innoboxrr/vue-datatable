@@ -197,6 +197,11 @@
 				required: true
 			},
 
+			policyMethod: {
+				type: String,
+				default: 'post'
+			},
+
 			showTopbar:{
 				type: Boolean,
 				default: true
