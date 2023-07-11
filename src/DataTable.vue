@@ -473,24 +473,37 @@
 
 			actionButtonClicked(actions) {
 
-				// Recuperar el id
-				let id = actions[0].params.id;
+				const id = actions[0].params.id;
 
-				axios.post(this.policyUrl, {
+				const requestData = {
 
 					_token: csrf_token,
 
 					id: id
 
-				}).then(res => {
+				};
+
+				const requestConfig = {
+
+					method: this.policyMethod,
+
+					url: this.policyUrl,
+
+					data: this.policyMethod === 'post' ? requestData : null,
+
+					params: this.policyMethod === 'get' ? requestData : null
+
+				};
+
+				axios(requestConfig).then(res => {
 
 					this.fetchPoliciesAttempts = 0;
 
-					let policies = res.data;
+					const policies = res.data;
 
-					actions.forEach( action => {
+					actions.forEach(action => {
 
-						if(policies[action.id]) {
+						if (policies[action.id]) {
 
 							action.policy = true;
 
@@ -500,9 +513,9 @@
 
 				}).catch(error => {
 
-					if(this.fetchPoliciesAttempts <= 3) {
+					if (this.fetchPoliciesAttempts <= 3) {
 
-						setTimeout( () => {	
+						setTimeout(() => {
 
 							++this.fetchPoliciesAttempts;
 
@@ -512,7 +525,7 @@
 
 					} else {
 
-						setTimeout( () => {
+						setTimeout(() => {
 
 							this.fetchPoliciesAttempts = 0;
 
