@@ -131,6 +131,7 @@
 					:actions="hasActions"
 					:data-table="dataTable"
 					:extra-params="extraParams"
+					:show-table-header="showTableHeader"
 					@sortColumn="sortColumn"
 					@actionButtonClicked="actionButtonClicked"
 					@actionClicked="actionClicked" />
@@ -240,6 +241,11 @@
 			cardWrapper: {
 				type: Boolean,
 				default: true
+			},
+
+			showTableHeader: {
+				type: Boolean,
+				default: true,
 			}
 
 		},
