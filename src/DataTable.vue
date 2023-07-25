@@ -421,8 +421,8 @@
 				let filters = {
 					...params,
 					...formFilters,
-					...this.externalFilters,
 					...order,
+					...this.externalFilters,
 					...page
 				}
 
