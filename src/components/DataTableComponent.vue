@@ -4,7 +4,7 @@
 	
 		<table class="uk-table uk-table-divider">
 					    
-		    <thead>
+		    <thead v-if="showTableHeader">
 		    
 		        <tr>
 		            
@@ -139,6 +139,11 @@
 				type: Object,
 				default: {}
 			},
+
+			showTableHeader: {
+				type: Boolean,
+				default: true,
+			}
 
 		},
 
