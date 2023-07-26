@@ -281,6 +281,8 @@
 				sort: this.model.dataTableSort(),
 			
 				orderBy: 'id',
+
+				internalSort: false,
 			
 				page: 1,
 			
@@ -418,12 +420,28 @@
 					page: this.page
 				}
 
-				let filters = {
-					...params,
-					...formFilters,
-					...order,
-					...this.externalFilters,
-					...page
+				let filters = {};
+
+				if(this.internalSort) {
+
+					filters = {
+						...params,
+						...formFilters,
+						...this.externalFilters,
+						...order,
+						...page
+					}
+
+				} else {
+
+					filters = {
+						...params,
+						...formFilters,
+						...order,
+						...this.externalFilters,
+						...page
+					}
+
 				}
 
 				return filters;
@@ -441,6 +459,9 @@
 			sortColumn(data) {
 
 				if(data.sortable == true) {
+
+					// Esto hace que se haga caso omiso a la ordenación de externalFilters
+					this.internalSort = true;
 
 					let column_id = data.id;
 
