@@ -41,7 +41,7 @@
 
 		        	</td>
 
-		            <td v-if="actions">
+		            <td v-if="actions" class="uk-text-right">
 
 		            	<button 
 		            		class="uk-button button" 

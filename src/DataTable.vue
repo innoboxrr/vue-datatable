@@ -122,7 +122,7 @@
 			}">
 
 			<div 
-				class="uk-card uk-card-body uk-border-rounded uk-overflow-auto uk-padding-small"
+				class="uk-card uk-card-body uk-border-rounded uk-padding-small"
 				:class="{
 					'uk-card-default': cardWrapper
 				}">
