@@ -32,6 +32,7 @@
 										v-if="action.policy"
 		                                :name="action.params.to.name" 
 		                                :params="{...action.params.to.params, ...extraParams}"
+		                                :query="action.params.to.query ? {...action.params.to.query} : null"
 		                                :icon="action.icon"
 		                                :text="action.name" />
 

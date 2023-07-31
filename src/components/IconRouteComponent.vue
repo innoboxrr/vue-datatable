@@ -27,6 +27,10 @@
 				type: Object,
 				default: {}
 			},
+			query: {
+				type: Object,
+				default: {}
+			},
 			text: {
 				type: String,
 				required: true
@@ -50,7 +54,8 @@
 			return {
 				pathObject: {
 					name: this.name,
-					params: this.params
+					params: this.params,
+					query: this.query
 				}
 			}
 		},
