@@ -14,7 +14,7 @@
 							
 						<!-- Action Button-->
 						<button 
-							class="uk-button button uk-button-large uk-border-rounded uk-box-shadow-medium uk-box-shadow-hover-small white-text uk-text-bold"
+							class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
 							@click="actionButtonClicked(crudActions)">
 							
 							Acciones
@@ -70,28 +70,32 @@
 
 						    <div>
 								
-								<a 
-						    		class="uk-text-right cursor"
+								<span 
+						    		class="uk-text-right pointer"
 						    		:uk-tooltip="`title: ${'Update results'}`"
 						    		@click="updateFilters">
 								
-									<i class="fas fa-sync tools-icon"></i>
+									<svg class="w-6 h-6 text-slate-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 20">
+									<path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 1v5h-5M2 19v-5h5m10-4a8 8 0 0 1-14.947 3.97M1 10a8 8 0 0 1 14.947-3.97"/>
+									</svg>
 								
-								</a>
+								</span>
 
 						    </div>
 
 						    <!-- Filter -->
 							<div>
 								
-								<a 
-						    		class="uk-text-right cursor" 
+								<span 
+						    		class="uk-text-right pointer" 
 						    		uk-toggle="target: .filter-form; animation: uk-animation-scale-up;"
 						    		uk-tooltip="title: Buscar">
 								
-									<i class="fas fa-sliders-h tools-icon"></i>
+									<svg class="w-6 h-6 text-slate-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 18">
+									<path d="M18.85 1.1A1.99 1.99 0 0 0 17.063 0H2.937a2 2 0 0 0-1.566 3.242L6.99 9.868 7 14a1 1 0 0 0 .4.8l4 3A1 1 0 0 0 13 17l.01-7.134 5.66-6.676a1.99 1.99 0 0 0 .18-2.09Z"/>
+									</svg>
 								
-								</a>
+								</span>
 
 						    </div>
 
@@ -123,7 +127,7 @@
 			}">
 
 			<div 
-				class="uk-card uk-card-body uk-border-rounded uk-padding-small"
+				class="uk-card uk-card-body max-w-sm p-6 bg-white border border-slate-200 rounded-lg shadow dark:bg-slate-800 dark:border-slate-700 uk-padding-small"
 				:class="{
 					'uk-card-default': cardWrapper
 				}">
