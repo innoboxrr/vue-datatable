@@ -1,10 +1,12 @@
 <template>
 
-	<div class="uk-overflow-auto">
+	<div class="relative overflow-x-auto shadow-md sm:rounded-lg">
 	
-		<table class="uk-table uk-table-divider">
+		<table class="w-full text-sm text-left text-slate-500 dark:text-slate-400">
 					    
-		    <thead v-if="showTableHeader">
+		    <thead 
+		    	v-if="showTableHeader"
+		    	class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
 		    
 		        <tr>
 		            
@@ -12,8 +14,10 @@
 		            	v-for="head in dataTable.head" 
 		            	:key="head.id"
 		            	:id="`th_${head.id}`"
-		            	@click="sortColumn(head)"
-		            	:class="{pointer: head.sortable}">
+		            	class="px-6 py-3"
+		            	scope="col" 
+		            	:class="{pointer: head.sortable}"
+		            	@click="sortColumn(head)">
 		            
 		            	{{ head.value }}
 		            
@@ -29,22 +33,29 @@
 
 		    <tbody>
 		        
-		        <tr v-for="body in dataTable.body" :key="body.id">
+		        <tr 
+		        	v-for="body in dataTable.body" 
+		        	:key="body.id"
+		        	class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
 		            
-		        	<td v-for="head in dataTable.head" :key="head.id">
+		        	<td 
+		        		v-for="head in dataTable.head" 
+		        		:key="head.id"
+		        		class="px-6 py-4">
 
 		        		<span 
 		        			v-if="head.html" 
+		        			class="dark:text-white" 
 		        			v-html="setData(head, body)"></span>
 
-		        		<span v-else>{{ setData(head, body) }}</span>
+		        		<span v-else class="dark:text-white">{{ setData(head, body) }}</span>
 
 		        	</td>
 
 		            <td v-if="actions" class="uk-text-right">
 
 		            	<button 
-		            		class="uk-button button" 
+		            		class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800" 
 		            		@click="actionButtonClicked(body.actions)">
 					
 							<i class="fas fa-cogs"></i>
