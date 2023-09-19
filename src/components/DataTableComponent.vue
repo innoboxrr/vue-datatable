@@ -2,11 +2,11 @@
 
 	<div class="relative overflow-x-auto sm:rounded-lg">
 	
-		<table class="w-full text-sm text-left text-slate-500 dark:text-slate-400">
+		<table class="w-full text-sm text-left text-slate-500 dark:text-slate-400 p-4">
 					    
 		    <thead 
 		    	v-if="showTableHeader"
-		    	class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+		    	class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 rounded-sm">
 		    
 		        <tr>
 		            
