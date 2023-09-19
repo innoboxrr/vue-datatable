@@ -2,7 +2,7 @@
 	
 	<div 
 		:uk-dropdown="options"
-		class="uk-padding-remove z-10 hidden text-base list-none bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-slate-800">
+		class="uk-padding-remove z-10 hidden text-base list-none bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-slate-800 p-2">
 
 	    <ul class="uk-nav uk-dropdown-nav">
 

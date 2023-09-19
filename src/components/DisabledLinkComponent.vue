@@ -1,13 +1,16 @@
 <template>
 	
-	<a href="#" class="disabled-link" :uk-tooltip="`title: ${ 'This action is not authorized' }; pos:right`">
+	<a 
+		href="#" 
+		class="disabled-link dark:text-white" 
+		:uk-tooltip="`title: ${ 'This action is not authorized' }; pos:right`">
 							
 		<span 
 			v-if="showIcon"
-			class="uk-margin-small-right uk-icon" 
+			class="uk-margin-small-right uk-icon dark:text-white" 
 			:uk-icon="icon"></span>
 
-		<span>{{ text }}</span>
+		<span class="dark:text-white">{{ text }}</span>
 
 	</a>
 

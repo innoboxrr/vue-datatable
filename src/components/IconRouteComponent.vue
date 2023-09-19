@@ -3,11 +3,11 @@
 	<router-link :to="pathObject">
 							
 		<span 
-			class="uk-margin-small-right uk-icon" 
+			class="uk-margin-small-right uk-icon dark:text-white" 
 			:uk-icon="iconAttr"
 			:style="iconStyle"></span>
 
-		<span :class="textClass">{{ text }}</span>
+		<span :class="textClass" class="dark:text-white">{{ text }}</span>
 
 	</router-link>
 
