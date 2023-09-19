@@ -10,7 +10,7 @@
 				<div uk-grid>
 					
 					<!-- Actions -->
-					<div class="uk-width-expand@m" v-if="hasActions">
+					<div class="uk-width-expand" v-if="hasActions">
 							
 						<!-- Action Button-->
 						<button 
@@ -64,7 +64,7 @@
 
 					</div>
 
-					<div v-if="hasFilter" class="uk-width-auto@m">
+					<div v-if="hasFilter" class="uk-width-auto">
 						
 						<div class="uk-grid-divider uk-child-width-expand uk-text-center" uk-grid>
 

@@ -64,7 +64,10 @@
 						
 						<nav-dropdown-component :id="`dropdown_${body.id}`" pos="left">
 				
-							<li v-for="action in body.actions">
+							<li 
+								v-for="action in body.actions"
+								:key="action.name"
+								class="hover:bg-slate-100 dark:hover:bg-slate-600 px-2 py-1">
 
 								<template v-if="action.route">
 
