@@ -2,15 +2,15 @@
 	
 	<a 
 		href="#" 
-		class="disabled-link dark:text-white" 
+		class="disabled-link block px-4 py-2 hover:bg-slate-100 dark:hover:bg-slate-600 dark:hover:text-white dark:text-slate-400" 
 		:uk-tooltip="`title: ${ 'This action is not authorized' }; pos:right`">
 							
 		<span 
 			v-if="showIcon"
-			class="uk-margin-small-right uk-icon dark:text-white" 
+			class="uk-margin-small-right uk-icon block px-4 py-2 hover:bg-slate-100 dark:hover:bg-slate-600 dark:hover:text-white dark:text-slate-400" 
 			:uk-icon="icon"></span>
 
-		<span class="dark:text-white">{{ text }}</span>
+		<span class="block px-4 py-2 hover:bg-slate-100 dark:hover:bg-slate-600 dark:hover:text-white dark:text-slate-400">{{ text }}</span>
 
 	</a>
 

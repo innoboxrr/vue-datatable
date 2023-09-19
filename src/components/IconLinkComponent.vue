@@ -3,11 +3,11 @@
 	<a :href="link" :target="target">
 							
 		<span 
-			class="uk-margin-small-right uk-icon dark:text-white" 
+			class="uk-margin-small-right uk-icon block px-4 py-2 hover:bg-slate-100 dark:hover:bg-slate-600 dark:hover:text-white dark:text-slate-400" 
 			:uk-icon="iconAttr"
 			:style="iconStyle"></span>
 
-		<span :class="textClass" class="dark:text-white">{{ text }}</span>
+		<span :class="textClass" class="block px-4 py-2 hover:bg-slate-100 dark:hover:bg-slate-600 dark:hover:text-white dark:text-slate-400">{{ text }}</span>
 
 	</a>
 
