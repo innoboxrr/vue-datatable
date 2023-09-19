@@ -5,7 +5,7 @@
 		<div v-if="showTopbar">
 
 			<!-- Tools -->
-			<div class="uk-card uk-card-body">
+			<div class="uk-container uk-container-expand pt-4">
 
 				<div uk-grid>
 					
