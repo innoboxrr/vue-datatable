@@ -7,10 +7,10 @@
 							
 		<span 
 			v-if="showIcon"
-			class="uk-margin-small-right uk-icon block px-4 py-2 hover:bg-slate-100 dark:hover:bg-slate-600 dark:hover:text-white dark:text-slate-400" 
+			class="uk-margin-small-right uk-icon" 
 			:uk-icon="icon"></span>
 
-		<span class="block px-4 py-2 hover:bg-slate-100 dark:hover:bg-slate-600 dark:hover:text-white dark:text-slate-400">{{ text }}</span>
+		<span>{{ text }}</span>
 
 	</a>
 
