@@ -127,9 +127,9 @@
 			}">
 
 			<div 
-				class="uk-card uk-card-body p-6 rounded-lg shadow dark:border-slate-700 uk-padding-small"
+				class="uk-padding-small"
 				:class="{
-					'bg-white dark:bg-slate-800': cardWrapper
+					'bg-white p-6 rounded-lg shadow dark:border-slate-700 dark:bg-slate-800': cardWrapper
 				}">
 				
 				<data-table-component
