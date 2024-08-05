@@ -69,7 +69,7 @@
 								:key="action.name"
 								class="hover:bg-slate-100 dark:hover:bg-slate-600 px-2 py-1">
 
-								<template v-if="action.route">
+								<template v-if="action.route && !action?.link">
 
 									<icon-route-component
 										v-if="action.policy"
@@ -84,6 +84,17 @@
 		                            	:icon="action.icon"
 		                            	:text="action.name"/> 
 		                            	
+								</template>
+
+								<template v-else-if="action.route && action.link">
+
+									<icon-link-component 
+										v-if="action.policy"
+										:link="action.params.link"
+										:target="action.params.target"
+										:icon="action.icon"
+										:text="action.name" />
+
 								</template>
 
 								<template v-else>
