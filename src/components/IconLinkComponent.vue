@@ -49,6 +49,13 @@
 			}
 		},
 
+		mounted() {
+			this.$nextTick(() => {
+				UIkit.update();
+			});
+		},
+
+
 		computed: {
 
 			iconAttr() {

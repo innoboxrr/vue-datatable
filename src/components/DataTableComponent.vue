@@ -1,8 +1,8 @@
 <template>
 
-	<div class="relative sm:rounded-lg">
+	<div class="relative sm:rounded-lg overflow-x-auto">
 	
-		<table class="w-full text-sm text-left text-slate-500 dark:text-slate-400 p-4">
+		<table class="min-w-full w-full text-sm text-left text-slate-500 dark:text-slate-400 p-4 ">
 					    
 		    <thead 
 		    	v-if="showTableHeader"
