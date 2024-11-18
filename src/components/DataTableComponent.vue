@@ -197,7 +197,7 @@
 
 			setData(head, body) {
 
-				return (typeof head.parser === 'function') ? head.parser(body[head.id]) : body[head.id]
+				return (typeof head.parser === 'function') ? head.parser(body[head.id], body) : body[head.id]
 
 			},
 
