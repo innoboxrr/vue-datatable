@@ -1,6 +1,6 @@
 <template>
 
-	<div class="relative sm:rounded-lg overflow-x-auto">
+	<div class="sm:rounded-lg overflow-x-auto">
 	
 		<table class="min-w-full w-full text-sm text-left text-slate-500 dark:text-slate-400 p-4 ">
 					    
