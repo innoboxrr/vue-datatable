@@ -86,6 +86,7 @@
 					:data-table="dataTable"
 					:extra-params="extraParams"
 					:show-table-header="showTableHeader"
+					:data-table-components="dataTableComponents"
 					@sortColumn="sortColumn"
 					@actionButtonClicked="actionButtonClicked"
 					@actionClicked="actionClicked" />
@@ -100,6 +101,7 @@
 
 <script>
 
+	import { markRaw } from 'vue';
 	import NavDropdownComponent from './components/NavDropdownComponent.vue'
 	import IconRouteComponent from './components/IconRouteComponent.vue'
 	import IconLinkComponent from './components/IconLinkComponent.vue'
@@ -189,6 +191,7 @@
 					meta: [],
 					links: []
 				},
+				dataTableComponents: this.registerComponents(),
 				sort: this.model.dataTableSort(),
 				orderBy: 'id',
 				internalSort: false,
@@ -225,6 +228,15 @@
 				    }
 				}
 				return cols;
+			},
+			registerComponents() {
+				// Usar `markRaw` para cada componente
+				let components = Object.keys(this.model.dataTableComponents())
+					.reduce((acc, key) => {
+						acc[key] = markRaw(this.model.dataTableComponents()[key]);
+						return acc;
+					}, {});
+				return components;
 			},
 			fetchData() {	
 				const requestData = {

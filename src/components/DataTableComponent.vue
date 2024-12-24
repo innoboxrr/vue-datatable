@@ -29,11 +29,19 @@
 		        		v-for="head in dataTable.head" 
 		        		:key="head.id"
 		        		class="px-6 py-4">
+						<template v-if="head.component">
+							<component
+								:is="getComponent(head.component)"
+								v-bind="setData(head, body)"
+								@callback="head.callback && typeof head.callback === 'function' ? head.callback($event, body) : null" />
+						</template>
 		        		<span 
-		        			v-if="head.html" 
+		        			v-else-if="head.html" 
 		        			class="dark:text-white" 
 		        			v-html="setData(head, body)"></span>
-		        		<span v-else class="dark:text-white">{{ setData(head, body) }}</span>
+		        		<span 
+							v-else 
+							class="dark:text-white">{{ setData(head, body) }}</span>
 		        	</td>
 		            <td v-if="actions" class="uk-text-right">
 		            	<button 
@@ -117,9 +125,22 @@
 			showTableHeader: {
 				type: Boolean,
 				default: true,
+			},
+			dataTableComponents: {
+				type: Object,
+				default: () => ({})
 			}
 		},
 		emits: ['sortColumn', 'actionButtonClicked', 'actionClicked'],
+		setup(props) {
+			const getComponent = (componentName) => {
+				return props.dataTableComponents[componentName] || null;
+			};
+
+			return {
+				getComponent,
+			};
+		},
 		methods: {
 			sortColumn(data) {
 				this.$emit('sortColumn', data);
