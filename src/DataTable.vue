@@ -230,6 +230,10 @@
 				return cols;
 			},
 			registerComponents() {
+				if (this.model.dataTableComponents === undefined || typeof this.model.dataTableComponents !== 'function') {
+					return {};
+				}
+
 				// Usar `markRaw` para cada componente
 				let components = Object.keys(this.model.dataTableComponents())
 					.reduce((acc, key) => {
