@@ -38,6 +38,9 @@
 							</li>
 						</nav-dropdown-component>
 					</div>
+					<div v-else>
+						<div class="uk-width-expand"></div>
+					</div>
 					<div v-if="hasFilter" class="uk-width-auto">
 						<div class="uk-grid-divider uk-child-width-expand uk-text-center" uk-grid>
 						    <div>
