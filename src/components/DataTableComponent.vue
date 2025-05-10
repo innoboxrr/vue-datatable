@@ -59,7 +59,7 @@
 										v-if="action.policy"
 		                                :name="action.params.to.name" 
 		                                :params="{...action.params.to.params, ...extraParams}"
-		                                :query="action.params.to.query ? {...action.params.to.query} : null"
+		                                :query="action.params.to.query ? {...action.params.to.query, ...extraQuery} : {...extraQuery}"
 		                                :icon="action.icon"
 		                                :text="action.name" />
 		                            <disabled-link-component 
@@ -119,6 +119,10 @@
 				required: true
 			},
 			extraParams: {
+				type: Object,
+				default: {}
+			},
+			extraQuery: {
 				type: Object,
 				default: {}
 			},

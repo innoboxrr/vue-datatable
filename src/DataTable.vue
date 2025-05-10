@@ -16,7 +16,7 @@
 										v-if="action.policy"
 		                                :name="action.params.to.name" 
 		                                :params="{...action.params.to.params, ...extraParams}"
-		                                :query="action.params.to.query ? {...action.params.to.query} : null"
+		                                :query="action.params.to.query ? {...action.params.to.query, ...extraQuery} : {...extraQuery}"
 		                                :icon="action.icon"
 		                                :text="action.name" />
 		                            <disabled-link-component 
@@ -88,6 +88,7 @@
 					:actions="hasActions"
 					:data-table="dataTable"
 					:extra-params="extraParams"
+					:extra-query="extraQuery"
 					:show-table-header="showTableHeader"
 					:data-table-components="dataTableComponents"
 					@sortColumn="sortColumn"
@@ -164,6 +165,10 @@
 				default: {}
 			},
 			extraParams: {
+				type: Object,
+				default: {}
+			},
+			extraQuery: {
 				type: Object,
 				default: {}
 			},
