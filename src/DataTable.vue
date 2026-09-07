@@ -1,42 +1,42 @@
-<template>	
+<template>
 	<div>
 		<div v-if="showTopbar">
 			<div class="uk-container uk-container-expand pt-4">
 				<div uk-grid>
 					<div class="uk-width-expand" v-if="hasActions">
-						<button 
+						<button
 							class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
 							@click="actionButtonClicked(crudActions)">
 							Acciones
 						</button>
-						<nav-dropdown-component id="actionCrudDropdown" pos="right">
+						<NavDropdownComponent id="actionCrudDropdown" pos="right">
 							<li v-for="action in crudActions" :key="action.id">
 								<template v-if="action.route">
-									<icon-route-component
+									<IconRouteComponent
 										v-if="action.policy"
-		                                :name="action.params.to.name" 
+		                                :name="action.params.to.name"
 		                                :params="{...action.params.to.params, ...extraParams}"
 		                                :query="action.params.to.query ? {...action.params.to.query, ...extraQuery} : {...extraQuery}"
 		                                :icon="action.icon"
 		                                :text="action.name" />
-		                            <disabled-link-component 
+		                            <DisabledLinkComponent
 		                            	v-else
 		                            	:icon="action.icon"
-		                            	:text="action.name"/> 
+		                            	:text="action.name"/>
 								</template>
 								<template v-else>
-									<icon-link-component 
+									<IconLinkComponent
 										v-if="action.policy"
 										:icon="action.icon"
-										:text="action.name" 
+										:text="action.name"
 										@click="actionClicked(action) , closeDropdown($event)" />
-									<disabled-link-component 
+									<DisabledLinkComponent
 		                            	v-else
 		                            	:icon="action.icon"
-		                            	:text="action.name"/> 
+		                            	:text="action.name"/>
 								</template>
 							</li>
-						</nav-dropdown-component>
+						</NavDropdownComponent>
 					</div>
 					<div v-else>
 						<div class="uk-width-expand"></div>
@@ -44,7 +44,7 @@
 					<div v-if="hasFilter" class="uk-width-auto">
 						<div class="uk-grid-divider uk-child-width-expand uk-text-center" uk-grid>
 						    <div>
-								<span 
+								<span
 						    		class="uk-text-right pointer"
 						    		:uk-tooltip="`title: ${'Update results'}`"
 						    		@click="updateFilters">
@@ -54,8 +54,8 @@
 								</span>
 						    </div>
 							<div>
-								<span 
-						    		class="uk-text-right pointer" 
+								<span
+						    		class="uk-text-right pointer"
 						    		uk-toggle="target: .filter-form; animation: uk-animation-scale-up;"
 						    		uk-tooltip="title: Buscar">
 									<svg class="w-6 h-6 text-slate-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 18">
@@ -67,24 +67,24 @@
 					</div>
 				</div>
 			</div>
-			<div 
+			<div
 				v-if="hasFilter"
-				class="filter-form uk-card uk-card-body uk-padding-remove-top" 
+				class="filter-form uk-card uk-card-body uk-padding-remove-top"
 				hidden>
 				<slot name="filterForm"></slot>
 			</div>
 		</div>
-		<div 
+		<div
 			class="uk-container uk-container-expand"
 			:class="{
 				'ptb-20': showTopbar
 			}">
-			<div 
+			<div
 				class="uk-padding-small"
 				:class="{
 					'bg-white p-6 rounded-lg shadow dark:border-slate-700 dark:bg-slate-800': cardWrapper
 				}">
-				<data-table-component
+				<DataTableComponent
 					:actions="hasActions"
 					:data-table="dataTable"
 					:extra-params="extraParams"
@@ -94,7 +94,7 @@
 					@sortColumn="sortColumn"
 					@actionButtonClicked="actionButtonClicked"
 					@actionClicked="actionClicked" />
-				<select-pagination-component
+				<SelectPaginationComponent
 					:meta="pagination.meta"
 					:links="pagination.links"
 					@updatePage="updatePage" />
@@ -103,281 +103,322 @@
 	</div>
 </template>
 
-<script>
+<script setup>
 
-	import { markRaw } from 'vue';
+	import { markRaw, onMounted, reactive, ref, watch } from 'vue'
+	import axios from 'axios'
+
 	import NavDropdownComponent from './components/NavDropdownComponent.vue'
 	import IconRouteComponent from './components/IconRouteComponent.vue'
 	import IconLinkComponent from './components/IconLinkComponent.vue'
 	import DisabledLinkComponent from './components/DisabledLinkComponent.vue'
 	import DataTableComponent from './components/DataTableComponent.vue'
 	import SelectPaginationComponent from './components/SelectPaginationComponent.vue'
-	
-	export default {
 
-		components: {
-			NavDropdownComponent,
-			IconRouteComponent,
-			IconLinkComponent,
-			DisabledLinkComponent,
-			DataTableComponent,
-			SelectPaginationComponent
+	const props = defineProps({
+		dataUrl: {
+			type: String,
+			required: true
 		},
-		props: {
-			dataUrl: {
-				type: String,
-				required: true
-			},
-			dataMethod: {
-				type: String,
-				default: 'post',
-			},
-			model: {
-				type: Object,
-				required: true
-			},
-			policyUrl: {
-				type: String,
-				required: true
-			},
-			policyMethod: {
-				type: String,
-				default: 'post'
-			},
-			showTopbar:{
-				type: Boolean,
-				default: true
-			},
-			hasActions: {
-				type: Boolean,
-				default: true,
-			},
-			hasFilter: {
-				type: Boolean,
-				default: true,
-			},
-			formFilters: {
-				type: Object,
-				default: {}
-			},
-			externalFilters: {
-				type: Object,
-				default: {}
-			},
-			extraParams: {
-				type: Object,
-				default: {}
-			},
-			extraQuery: {
-				type: Object,
-				default: {}
-			},
-			hideColumns: {
-				type: Array,
-				default: []
-			},
-			cardWrapper: {
-				type: Boolean,
-				default: true
-			},
-			showTableHeader: {
-				type: Boolean,
-				default: true,
-			}
+		dataMethod: {
+			type: String,
+			default: 'post',
 		},
-		mounted() {
-			this.fetchData();
+		model: {
+			type: Object,
+			required: true
 		},
-		data() {
-			return {
-				crudActions: this.model.crudActions(),
-				dataTable: {
-					head: this.dataTableHead(),
-					body: []
-				},
-				pagination: {	
-					meta: [],
-					links: []
-				},
-				dataTableComponents: this.registerComponents(),
-				sort: this.model.dataTableSort(),
-				orderBy: 'id',
-				internalSort: false,
-				page: 1,
-				fetchDataAttempts: 0,
-				fetchPoliciesAttempts: 0,
-			}
+		policyUrl: {
+			type: String,
+			required: true
 		},
-		watch: {
-			formFilters: {
-				handler(val, oldVal) {
-					this.page = 1;
-			    	this.updateFilters();
-			    },
-			    deep: true
-			},
-			externalFilters: {
-				handler(val, oldVal) {
-					if(!_.isEqual(val, oldVal)) this.updateFilters();
-			    },
-			    deep: true
-			}
+		policyMethod: {
+			type: String,
+			default: 'post'
 		},
-		methods: {
-			dataTableHead() {
-				// NOTA: En este punto puede existir una oportunidad para sobreescribir las columnas del datatable
-				let cols = this.model.dataTableHead();
-				let rm = this.hideColumns;
-				for( let i = cols.length - 1; i >= 0; i--) {
-				 	for( let j = 0; j < rm.length; j++) {
-				 	    if(cols[i] && (cols[i].id === rm[j].id)){
-				    		cols.splice(i, 1);
-				    	}
-				    }
-				}
-				return cols;
-			},
-			registerComponents() {
-				if (this.model.dataTableComponents === undefined || typeof this.model.dataTableComponents !== 'function') {
-					return {};
-				}
-
-				// Usar `markRaw` para cada componente
-				let components = Object.keys(this.model.dataTableComponents())
-					.reduce((acc, key) => {
-						acc[key] = markRaw(this.model.dataTableComponents()[key]);
-						return acc;
-					}, {});
-				return components;
-			},
-			fetchData() {	
-				const requestData = {
-					method: this.dataMethod,
-					url: this.dataUrl,
-					data: this.dataMethod === 'post' ? this.getFilters() : null,
-					params: this.dataMethod === 'get' ? this.getFilters() : null
-				};
-				axios(requestData).then(res => {
-					this.fetchDataAttempts = 0;
-					this.dataTable.body = res.data.data;
-					this.pagination.meta = res.data.meta;
-					this.pagination.links = res.data.links;
-				}).catch(error => {
-					if (error.response.status === 403) {
-						// this.$router.push({name: "NotAuthorized" });
-					} else {
-						if (this.fetchDataAttempts <= 3) {
-							setTimeout(() => {
-								++this.fetchDataAttempts;
-								this.fetchData();
-							}, 1500);
-						}
-					}
-				});
-			},
-			getFilters() {
-				let formFilters = this.formFilters;
-				let params = {
-					_token: csrf_token,
-					managed: true,
-					except_view_any: true,
-				}
-				let order = {
-					orderBy: this.orderBy,
-					orderMode: this.sort[this.orderBy]
-				}
-				let page = {
-					page: this.page
-				}
-				let filters = {};
-				if(this.internalSort) {
-					filters = {
-						...params,
-						...formFilters,
-						...this.externalFilters,
-						...order,
-						...page
-					}
-				} else {
-					filters = {
-						...params,
-						...formFilters,
-						...order,
-						...this.externalFilters,
-						...page
-					}
-				}
-				return filters;
-			},
-			updateFilters() {
-				this.model.setFilters(this.getFilters());
-				this.fetchData();
-			},
-			sortColumn(data) {
-				if(data.sortable == true) {
-					// Esto hace que se haga caso omiso a la ordenación de externalFilters
-					this.internalSort = true;
-					let column_id = data.id;
-					// Determinar la columan que va a ordenar los resultados
-					this.orderBy = column_id;
-					// Encontrar el orden actual
-					let order = (this.sort[column_id] == 'asc') ? 'desc' : 'asc';
-					// Determinar el nuevo orden para la columna dada
-					this.sort[column_id] = order;
-					// Solicitar los datos
-					this.updateFilters();
-				}
-			},
-			updatePage(page) {
-				this.page = page;
-				this.updateFilters();
-			},
-			actionClicked(action) {
-				this.model[action.callback](action.params).then( res => {
-					this.updateFilters();
-				}).catch( error => {
-					console.error(error);
-				});
-			},
-			actionButtonClicked(actions) {
-				const id = actions[0].params.id;
-				const requestData = {
-					_token: csrf_token,
-					id: id
-				};
-				const requestConfig = {
-					method: this.policyMethod,
-					url: this.policyUrl,
-					data: this.policyMethod === 'post' ? requestData : null,
-					params: this.policyMethod === 'get' ? requestData : null
-				};
-				axios(requestConfig).then(res => {
-					this.fetchPoliciesAttempts = 0;
-					const policies = res.data;
-					actions.forEach(action => {
-						if (policies[action.id]) {
-							action.policy = true;
-						}
-					});
-				}).catch(error => {
-					if (this.fetchPoliciesAttempts <= 3) {
-						setTimeout(() => {
-							++this.fetchPoliciesAttempts;
-							this.actionButtonClicked(actions);
-						}, 1500);
-					} else {
-						setTimeout(() => {
-							this.fetchPoliciesAttempts = 0;
-						}, 3000);
-					}
-				});
-			},
-			closeDropdown(event){
-				let dropdown = event.target.closest('.uk-dropdown');
-				UIkit.dropdown(dropdown).hide(false);
-			}
+		showTopbar:{
+			type: Boolean,
+			default: true
+		},
+		hasActions: {
+			type: Boolean,
+			default: true,
+		},
+		hasFilter: {
+			type: Boolean,
+			default: true,
+		},
+		// Vue 3 exige factoria en los defaults de objeto y array.
+		formFilters: {
+			type: Object,
+			default: () => ({})
+		},
+		externalFilters: {
+			type: Object,
+			default: () => ({})
+		},
+		extraParams: {
+			type: Object,
+			default: () => ({})
+		},
+		extraQuery: {
+			type: Object,
+			default: () => ({})
+		},
+		hideColumns: {
+			type: Array,
+			default: () => []
+		},
+		cardWrapper: {
+			type: Boolean,
+			default: true
+		},
+		showTableHeader: {
+			type: Boolean,
+			default: true,
 		}
+	})
+
+	/**
+	 * Se leia de la global `csrf_token`, que la aplicacion anfitriona tenia
+	 * que definir en window: el componente no se podia montar fuera de ella.
+	 */
+	const csrfToken = () => globalThis.csrf_token
+		?? document.querySelector('meta[name="csrf-token"]')?.getAttribute('content')
+		?? ''
+
+	/**
+	 * Sustituye a `_.isEqual` de lodash, que se usaba como global sin
+	 * declararla como dependencia.
+	 */
+	const isEqual = (a, b) => {
+
+		if (a === b) {
+			return true
+		}
+
+		if (typeof a !== 'object' || typeof b !== 'object' || a === null || b === null) {
+			return false
+		}
+
+		const keysA = Object.keys(a)
+		const keysB = Object.keys(b)
+
+		return keysA.length === keysB.length && keysA.every((key) => isEqual(a[key], b[key]))
+
 	}
+
+	const hiddenColumnIds = () => props.hideColumns.map(
+		// Se admite tanto ['name'] como [{ id: 'name' }]: el contrato nunca
+		// estuvo documentado y por ahi circulan las dos formas.
+		(column) => typeof column === 'string' ? column : column?.id
+	)
+
+	const buildHead = () => {
+
+		const hidden = hiddenColumnIds()
+
+		return props.model.dataTableHead().filter((column) => ! hidden.includes(column.id))
+
+	}
+
+	const registerComponents = () => {
+
+		if (typeof props.model.dataTableComponents !== 'function') {
+			return {}
+		}
+
+		const declared = props.model.dataTableComponents()
+
+		return Object.keys(declared).reduce((components, key) => {
+			components[key] = markRaw(declared[key])
+
+			return components
+		}, {})
+
+	}
+
+	const crudActions = ref(props.model.crudActions())
+
+	const dataTable = reactive({
+		head: buildHead(),
+		body: [],
+	})
+
+	const pagination = reactive({
+		meta: [],
+		links: [],
+	})
+
+	const dataTableComponents = registerComponents()
+
+	const sort = reactive(props.model.dataTableSort())
+
+	const orderBy = ref('id')
+	const internalSort = ref(false)
+	const page = ref(1)
+
+	let fetchDataAttempts = 0
+	let fetchPoliciesAttempts = 0
+
+	const getFilters = () => {
+
+		const params = {
+			_token: csrfToken(),
+			managed: true,
+			except_view_any: true,
+		}
+
+		const order = {
+			orderBy: orderBy.value,
+			orderMode: sort[orderBy.value],
+		}
+
+		// Con orden interno, el del usuario gana a lo que traigan los filtros
+		// externos; sin el, es al reves.
+		return internalSort.value
+			? { ...params, ...props.formFilters, ...props.externalFilters, ...order, page: page.value }
+			: { ...params, ...props.formFilters, ...order, ...props.externalFilters, page: page.value }
+
+	}
+
+	const fetchData = () => {
+
+		const filters = getFilters()
+
+		return axios({
+			method: props.dataMethod,
+			url: props.dataUrl,
+			data: props.dataMethod === 'post' ? filters : null,
+			params: props.dataMethod === 'get' ? filters : null,
+		}).then((res) => {
+
+			fetchDataAttempts = 0
+			dataTable.body = res.data.data
+			pagination.meta = res.data.meta
+			pagination.links = res.data.links
+
+		}).catch((error) => {
+
+			// Un fallo de red no trae respuesta: leer error.response.status
+			// sin comprobarlo lanzaba un TypeError dentro del propio manejador.
+			if (error.response?.status === 403) {
+				return
+			}
+
+			if (fetchDataAttempts <= 3) {
+				setTimeout(() => {
+					++fetchDataAttempts
+					fetchData()
+				}, 1500)
+			}
+
+		})
+
+	}
+
+	const updateFilters = () => {
+		props.model.setFilters(getFilters())
+
+		return fetchData()
+	}
+
+	const sortColumn = (column) => {
+
+		if (column.sortable !== true) {
+			return
+		}
+
+		// A partir de aqui el orden elegido por el usuario manda sobre el que
+		// puedan traer los filtros externos.
+		internalSort.value = true
+		orderBy.value = column.id
+		sort[column.id] = sort[column.id] === 'asc' ? 'desc' : 'asc'
+
+		updateFilters()
+
+	}
+
+	const updatePage = (newPage) => {
+		page.value = newPage
+
+		updateFilters()
+	}
+
+	const actionClicked = (action) => {
+		return props.model[action.callback](action.params)
+			.then(() => updateFilters())
+			.catch((error) => console.error(error))
+	}
+
+	const actionButtonClicked = (actions) => {
+
+		const requestData = {
+			_token: csrfToken(),
+			id: actions[0]?.params?.id ?? null,
+		}
+
+		return axios({
+			method: props.policyMethod,
+			url: props.policyUrl,
+			data: props.policyMethod === 'post' ? requestData : null,
+			params: props.policyMethod === 'get' ? requestData : null,
+		}).then((res) => {
+
+			fetchPoliciesAttempts = 0
+
+			actions.forEach((action) => {
+				if (res.data[action.id]) {
+					action.policy = true
+				}
+			})
+
+		}).catch(() => {
+
+			if (fetchPoliciesAttempts <= 3) {
+				setTimeout(() => {
+					++fetchPoliciesAttempts
+					actionButtonClicked(actions)
+				}, 1500)
+
+				return
+			}
+
+			setTimeout(() => {
+				fetchPoliciesAttempts = 0
+			}, 3000)
+
+		})
+
+	}
+
+	const closeDropdown = (event) => {
+
+		const dropdown = event.target.closest('.uk-dropdown')
+
+		if (dropdown) {
+			globalThis.UIkit?.dropdown(dropdown)?.hide(false)
+		}
+
+	}
+
+	watch(() => props.formFilters, () => {
+		page.value = 1
+		updateFilters()
+	}, { deep: true })
+
+	watch(() => props.externalFilters, (value, previous) => {
+		if (! isEqual(value, previous)) {
+			updateFilters()
+		}
+	}, { deep: true })
+
+	onMounted(fetchData)
+
+	// El test y el anfitrion consultan el estado de las acciones; con
+	// <script setup> los bindings son privados si no se exponen.
+	defineExpose({ crudActions, dataTable, pagination })
+
 </script>
 
 <style scoped>

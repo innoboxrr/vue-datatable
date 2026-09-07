@@ -1,13 +1,13 @@
 <template>
-	
-	<a 
-		href="#" 
-		class="disabled-link block px-4 py-2 dark:hover:text-white dark:text-slate-400" 
+
+	<a
+		href="#"
+		class="disabled-link block px-4 py-2 dark:hover:text-white dark:text-slate-400"
 		:uk-tooltip="`title: ${ 'This action is not authorized' }; pos:right`">
-							
-		<span 
+
+		<span
 			v-if="showIcon"
-			class="uk-margin-small-right uk-icon" 
+			class="uk-margin-small-right uk-icon"
 			:uk-icon="icon"></span>
 
 		<span>{{ text }}</span>
@@ -16,34 +16,24 @@
 
 </template>
 
-<script>
-	
-	export default {
+<script setup>
 
-		props: {
+	import { computed } from 'vue'
 
-			icon: {
-				type: String,
-				default: ''
-			},
+	const props = defineProps({
 
-			text: {
-				type: String,
-				required: true
-			}
-
+		icon: {
+			type: String,
+			default: ''
 		},
 
-		computed: {
-
-			showIcon() {
-
-				return (this.icon != '' && this.icon != undefined);
-
-			}
-
+		text: {
+			type: String,
+			required: true
 		}
 
-	}
+	})
+
+	const showIcon = computed(() => props.icon !== '' && props.icon != null)
 
 </script>

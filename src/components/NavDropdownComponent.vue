@@ -1,6 +1,6 @@
 <template>
-	
-	<div 
+
+	<div
 		:uk-dropdown="options"
 		class="uk-padding-remove z-10 hidden text-base list-none bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-slate-800 p-2">
 
@@ -14,49 +14,39 @@
 
 </template>
 
-<script>
-	
-	export default {
+<script setup>
 
-		props: {
-			pos: {
-				type: String,
-				default: "bottom-left"
-			},
-			mode: {
-				type: String,
-				default: "click"
-			},
-			offset: {
-				type: Number,
-				default: 0
-			},
-			animation: {
-				type: String,
-				default: "uk-animation-slide-top-small"
-			},
-			duration: {
-				type: Number,
-				default: 500
-			}
+	import { computed } from 'vue'
+
+	const props = defineProps({
+		pos: {
+			type: String,
+			default: "bottom-left"
 		},
-
-		computed: {
-
-			options () {
-
-				return `
-					pos: ${this.pos}; 
-					mode: ${this.mode};
-					offset: ${this.offset};
-					animation: ${this.animation};
-					duration: ${this.duration};
-				`;
-
-			}
-
+		mode: {
+			type: String,
+			default: "click"
+		},
+		offset: {
+			type: Number,
+			default: 0
+		},
+		animation: {
+			type: String,
+			default: "uk-animation-slide-top-small"
+		},
+		duration: {
+			type: Number,
+			default: 500
 		}
+	})
 
-	}
+	const options = computed(() => `
+					pos: ${props.pos};
+					mode: ${props.mode};
+					offset: ${props.offset};
+					animation: ${props.animation};
+					duration: ${props.duration};
+				`)
 
 </script>

@@ -1,32 +1,32 @@
 <template>
 	<div class="sm:rounded-lg overflow-x-auto">
 		<table class="min-w-full w-full text-sm text-left text-slate-500 dark:text-slate-400 p-4 ">
-		    <thead 
+		    <thead
 		    	v-if="showTableHeader"
 		    	class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 rounded-sm">
 		        <tr>
-		            <th 
-		            	v-for="head in dataTable.head" 
+		            <th
+		            	v-for="head in dataTable.head"
 		            	:key="head.id"
 		            	:id="`th_${head.id}`"
 		            	class="px-6 py-3"
-		            	scope="col" 
+		            	scope="col"
 		            	:class="{pointer: head.sortable}"
-		            	@click="sortColumn(head)">
+		            	@click="emit('sortColumn', head)">
 		            	{{ head.value }}
 		            </th>
-		            <th 
-		            	class="uk-table-shrink" 
+		            <th
+		            	class="uk-table-shrink"
 		            	v-if="actions"></th>
 		        </tr>
 		    </thead>
 		    <tbody>
-		        <tr 
-		        	v-for="body in dataTable.body" 
+		        <tr
+		        	v-for="body in dataTable.body"
 		        	:key="body.id"
-		        	class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"> 
-		        	<td 
-		        		v-for="head in dataTable.head" 
+		        	class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+		        	<td
+		        		v-for="head in dataTable.head"
 		        		:key="head.id"
 		        		class="px-6 py-4">
 						<template v-if="head.component">
@@ -35,40 +35,40 @@
 								v-bind="setData(head, body)"
 								@callback="head.callback && typeof head.callback === 'function' ? head.callback($event, body) : null" />
 						</template>
-		        		<span 
-		        			v-else-if="head.html" 
-		        			class="dark:text-white" 
+		        		<span
+		        			v-else-if="head.html"
+		        			class="dark:text-white"
 		        			v-html="setData(head, body)"></span>
-		        		<span 
-							v-else 
+		        		<span
+							v-else
 							class="dark:text-white">{{ setData(head, body) }}</span>
 		        	</td>
 		            <td v-if="actions" class="uk-text-right">
-		            	<button 
-		            		class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-2 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800" 
-		            		@click="actionButtonClicked(body.actions)">
+		            	<button
+		            		class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-2 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+		            		@click="emit('actionButtonClicked', body.actions)">
 							<i class="fas fa-cogs"></i>
 						</button>
-						<nav-dropdown-component :id="`dropdown_${body.id}`" pos="left">
-							<li 
+						<NavDropdownComponent :id="`dropdown_${body.id}`" pos="left">
+							<li
 								v-for="action in body.actions"
 								:key="action.name"
 								class="hover:bg-slate-100 dark:hover:bg-slate-600 px-2 py-1">
 								<template v-if="action.route && !action?.link">
-									<icon-route-component
+									<IconRouteComponent
 										v-if="action.policy"
-		                                :name="action.params.to.name" 
+		                                :name="action.params.to.name"
 		                                :params="{...action.params.to.params, ...extraParams}"
 		                                :query="action.params.to.query ? {...action.params.to.query, ...extraQuery} : {...extraQuery}"
 		                                :icon="action.icon"
 		                                :text="action.name" />
-		                            <disabled-link-component 
+		                            <DisabledLinkComponent
 		                            	v-else
 		                            	:icon="action.icon"
-		                            	:text="action.name"/> 
+		                            	:text="action.name"/>
 								</template>
 								<template v-else-if="action.route && action.link">
-									<icon-link-component 
+									<IconLinkComponent
 										v-if="action.policy"
 										:link="action.params.link"
 										:target="action.params.target"
@@ -76,18 +76,18 @@
 										:text="action.name" />
 								</template>
 								<template v-else>
-									<icon-link-component 
+									<IconLinkComponent
 										v-if="action.policy"
 										:icon="action.icon"
-										:text="action.name" 
-										@click.prevent="actionClicked(action), closeDropdown($event)" />
-									<disabled-link-component 
+										:text="action.name"
+										@click.prevent="emit('actionClicked', action), closeDropdown($event)" />
+									<DisabledLinkComponent
 		                            	v-else
 		                            	:icon="action.icon"
-		                            	:text="action.name"/> 
+		                            	:text="action.name"/>
 								</template>
 							</li>
-						</nav-dropdown-component>
+						</NavDropdownComponent>
 		            </td>
 		        </tr>
 		    </tbody>
@@ -95,76 +95,84 @@
 	</div>
 </template>
 
-<script>
-	
+<script setup>
+
 	import NavDropdownComponent from './NavDropdownComponent.vue'
 	import IconRouteComponent from './IconRouteComponent.vue'
 	import IconLinkComponent from './IconLinkComponent.vue'
 	import DisabledLinkComponent from './DisabledLinkComponent.vue'
 
-	export default {
-		components: {
-			NavDropdownComponent,
-			IconRouteComponent,
-			IconLinkComponent,
-			DisabledLinkComponent
+	const props = defineProps({
+		actions: {
+			type: Boolean,
+			default: false
 		},
-		props: {
-			actions: {
-				type: Boolean,
-				default: false
-			},
-			dataTable: {
-				type: [Object, Boolean],
-				required: true
-			},
-			extraParams: {
-				type: Object,
-				default: {}
-			},
-			extraQuery: {
-				type: Object,
-				default: {}
-			},
-			showTableHeader: {
-				type: Boolean,
-				default: true,
-			},
-			dataTableComponents: {
-				type: Object,
-				default: () => ({})
-			}
+		dataTable: {
+			type: [Object, Boolean],
+			required: true
 		},
-		emits: ['sortColumn', 'actionButtonClicked', 'actionClicked'],
-		setup(props) {
-			const getComponent = (componentName) => {
-				return props.dataTableComponents[componentName] || null;
-			};
-
-			return {
-				getComponent,
-			};
+		// Vue 3 exige factoria en los defaults de objeto.
+		extraParams: {
+			type: Object,
+			default: () => ({})
 		},
-		methods: {
-			sortColumn(data) {
-				this.$emit('sortColumn', data);
-			},
-			actionButtonClicked(data) {
-				this.$emit('actionButtonClicked', data);
-			},
-			actionClicked(data) {
-				this.$emit('actionClicked', data);
-			},
-			setData(head, body) {
-				const data = JSON.parse(JSON.stringify(body));
-				return typeof head.parser === 'function' ? head.parser(data[head.id], data) : data[head.id];
-			},
-			closeDropdown(event){
-				let dropdown = event.target.closest('.uk-dropdown');
-				UIkit.dropdown(dropdown).hide(false);
-			}
+		extraQuery: {
+			type: Object,
+			default: () => ({})
+		},
+		showTableHeader: {
+			type: Boolean,
+			default: true,
+		},
+		dataTableComponents: {
+			type: Object,
+			default: () => ({})
 		}
+	})
+
+	const emit = defineEmits(['sortColumn', 'actionButtonClicked', 'actionClicked'])
+
+	const getComponent = (componentName) => props.dataTableComponents[componentName] || null
+
+	/**
+	 * Copia aislada de cada fila, para que un parser del modelo no pueda
+	 * mutar los datos de la tabla.
+	 *
+	 * Antes se clonaba con JSON dentro de setData(), es decir una vez por
+	 * celda: con 20 filas y 8 columnas eran 160 clonados en cada repintado.
+	 * La cache por fila lo deja en uno.
+	 */
+	const rowCache = new WeakMap()
+
+	const snapshot = (body) => {
+
+		if (! rowCache.has(body)) {
+			rowCache.set(body, JSON.parse(JSON.stringify(body)))
+		}
+
+		return rowCache.get(body)
+
 	}
+
+	const setData = (head, body) => {
+
+		const data = snapshot(body)
+
+		return typeof head.parser === 'function' ? head.parser(data[head.id], data) : data[head.id]
+
+	}
+
+	const closeDropdown = (event) => {
+
+		const dropdown = event.target.closest('.uk-dropdown')
+
+		// UIkit lo aporta la aplicacion anfitriona.
+		if (dropdown) {
+			globalThis.UIkit?.dropdown(dropdown)?.hide(false)
+		}
+
+	}
+
 </script>
 
 <style>

@@ -1,12 +1,12 @@
 <template>
-	
-	<a 
+
+	<a
 		class="block px-4 py-2 dark:hover:text-white dark:text-slate-400"
-		:href="link" 
+		:href="link"
 		:target="target">
-							
-		<span 
-			class="uk-margin-small-right uk-icon" 
+
+		<span
+			class="uk-margin-small-right uk-icon"
 			:uk-icon="iconAttr"
 			:style="iconStyle"></span>
 
@@ -16,64 +16,50 @@
 
 </template>
 
+<script setup>
 
-<script>
-	
-	export default {
+	import { computed, nextTick, onMounted } from 'vue'
 
-		props: {
-			link: {
-				type: String,
-				default: '#'
-			},
-			text: {
-				type: String,
-				required: true
-			},
-			icon: {
-				type: String,
-				required: true
-			},
-			ratio: {
-				type: Number,
-				required: false,
-				default: 1
-			},
-			textClass: {
-				type: String,
-				default: ""
-			},
-			target: {
-				type: String,
-				default: "_self"
-			}
+	const props = defineProps({
+		link: {
+			type: String,
+			default: '#'
 		},
-
-		mounted() {
-			this.$nextTick(() => {
-				UIkit.update();
-			});
+		text: {
+			type: String,
+			required: true
 		},
-
-
-		computed: {
-
-			iconAttr() {
-
-				return `icon: ${this.icon}; ratio: ${this.ratio};`;
-
-			},
-
-			iconStyle() {
-
-				return {
-					fontSize: (this.ratio * 16) + 'px'
-				}
-
-			}
-
+		icon: {
+			type: String,
+			required: true
+		},
+		ratio: {
+			type: Number,
+			required: false,
+			default: 1
+		},
+		textClass: {
+			type: String,
+			default: ""
+		},
+		target: {
+			type: String,
+			default: "_self"
 		}
+	})
 
-	}
+	onMounted(() => {
+		nextTick(() => {
+			// UIkit lo aporta la aplicacion anfitriona; sin la guarda el
+			// componente no se puede montar en un entorno de pruebas ni en SSR.
+			globalThis.UIkit?.update()
+		})
+	})
+
+	const iconAttr = computed(() => `icon: ${props.icon}; ratio: ${props.ratio};`)
+
+	const iconStyle = computed(() => ({
+		fontSize: (props.ratio * 16) + 'px'
+	}))
 
 </script>

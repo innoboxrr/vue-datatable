@@ -1,106 +1,78 @@
 <template>
-	
+
 	<ul v-if="length > 3" class="uk-pagination uk-flex-center" uk-margin>
-	
+
 	    <li v-if="firstLink != null">
 
-	    	<a href="#" @click="$emit('go', firstLink)">
+	    	<a href="#" @click="emit('go', firstLink)">
 
 	    		<span uk-pagination-previous></span>
 
 	    	</a>
 
 	    </li>
-	
-	    <li 
-	    	v-for="link in middleLinks" 
+
+	    <li
+	    	v-for="link in middleLinks"
 	    	:key="link.label"
 	    	:class="{
 	    		'uk-disabled': link.url == null,
 	    		'uk-active': link.active,
 	    	}">
 
-	    	<a href="#" @click="$emit('go', link.url)">
+	    	<a href="#" @click="emit('go', link.url)">
 
 	    		{{ link.label }}
 
 	    	</a>
 
 	    </li>
-	
+
 	    <li v-if="lastLink != null">
 
-	    	<a href="#" @click="$emit('go', lastLink)">
+	    	<a href="#" @click="emit('go', lastLink)">
 
 	    		<span uk-pagination-next></span>
 
 	    	</a>
 
 	    </li>
-	
+
 	</ul>
 
 </template>
 
-<script>
-	
-	export default {
+<script setup>
 
-		props: {
-			links: {
-				type: Array,
-				required: true,
-			}
-		},
+	import { computed } from 'vue'
 
-		emits: ['go'],
-
-		computed: {
-
-			length() {
-
-				return this.links.length;
-
-			},
-
-			lastLinkIndex() {
-
-				return this.length - 1;
-
-			},
-
-			firstLink() {
-
-				return (this.length > 0) ? this.links[0].url : null;
-
-			},
-
-			lastLink() {
-
-				return (this.length > 0 && this.links[this.lastLinkIndex] != undefined) ? 
-					this.links[this.lastLinkIndex].url : 
-					null;
-
-			},
-
-			middleLinks() {
-
-				let auxLinks = this.links;
-
-				let middleLinks = auxLinks.slice(1, -1);
-
-				return middleLinks;
-
-			},
-
+	const props = defineProps({
+		links: {
+			type: Array,
+			required: true,
 		}
+	})
 
-	}
+	const emit = defineEmits(['go'])
+
+	const length = computed(() => props.links.length)
+
+	const firstLink = computed(() => length.value > 0 ? props.links[0].url : null)
+
+	const lastLink = computed(() => {
+
+		const last = props.links[length.value - 1]
+
+		return length.value > 0 && last !== undefined ? last.url : null
+
+	})
+
+	const middleLinks = computed(() => props.links.slice(1, -1))
 
 </script>
 
 <style scoped>
-	
+
 	.uk-pagination > .uk-active > * {
 	    color: #666;
 	    font-weight: 600;
