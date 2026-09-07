@@ -5,7 +5,7 @@
 		class="block px-4 py-2 dark:hover:text-white dark:text-slate-400">
 
 		<span
-			class="uk-margin-small-right uk-icon"
+			class="fe-mr-sm uk-icon"
 			:uk-icon="iconAttr"
 			:style="iconStyle"></span>
 

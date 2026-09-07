@@ -6,7 +6,7 @@
 		:target="target">
 
 		<span
-			class="uk-margin-small-right uk-icon"
+			class="fe-mr-sm uk-icon"
 			:uk-icon="iconAttr"
 			:style="iconStyle"></span>
 

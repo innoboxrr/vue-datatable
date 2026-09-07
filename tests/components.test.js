@@ -46,7 +46,7 @@ describe('NavDropdownComponent', () => {
     it('renderiza el contenido del slot dentro de la lista', () => {
         const wrapper = mount(NavDropdownComponent, { slots: { default: '<li>uno</li>' } })
 
-        expect(wrapper.find('ul.uk-nav li').text()).toBe('uno')
+        expect(wrapper.find('ul.fe-menu li').text()).toBe('uno')
     })
 
 })

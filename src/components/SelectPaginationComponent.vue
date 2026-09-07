@@ -1,10 +1,10 @@
 <template>
 
-	<div class="pagination" uk-grid>
+	<div class="pagination" fe-grid>
 
-		<div class="uk-width-auto">
+		<div class="fe-w-auto">
 
-			<ul class="uk-pagination uk-flex-left uk-margin-medium-top" uk-margin>
+			<ul class="fe-pagination fe-justify-start fe-mt-md" fe-mb>
 
 			    <li>
 
@@ -22,16 +22,16 @@
 
 		</div>
 
-		<div class="uk-width-expand">
+		<div class="fe-w-expand">
 
-			<ul class="uk-pagination uk-flex-right uk-margin-medium-top" uk-margin>
+			<ul class="fe-pagination fe-justify-end fe-mt-md" fe-mb>
 
 			    <!-- Prev -->
 			    <li v-if="currentPage > 1">
 
 			    	<a href="#" @click="prevPage()">
 
-			    		<span uk-pagination-previous></span>
+			    		<span fe-page-prev></span>
 
 			    	</a>
 
@@ -55,7 +55,7 @@
 
 			    	<a href="#" @click="nextPage()">
 
-			    		<span uk-pagination-next></span>
+			    		<span fe-page-next></span>
 
 			    	</a>
 

@@ -7,7 +7,7 @@
 
 		<span
 			v-if="showIcon"
-			class="uk-margin-small-right uk-icon"
+			class="fe-mr-sm uk-icon"
 			:uk-icon="icon"></span>
 
 		<span>{{ text }}</span>

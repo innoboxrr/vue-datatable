@@ -1,6 +1,6 @@
 <template>
 	<div class="sm:rounded-lg overflow-x-auto">
-		<table class="min-w-full w-full text-sm text-left text-slate-500 dark:text-slate-400 p-4 ">
+		<table class="min-w-full w-full text-sm text-left text-slate-500 dark:text-slate-400 p-4">
 		    <thead
 		    	v-if="showTableHeader"
 		    	class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 rounded-sm">
@@ -16,7 +16,7 @@
 		            	{{ head.value }}
 		            </th>
 		            <th
-		            	class="uk-table-shrink"
+		            	class="fe-shrink"
 		            	v-if="actions"></th>
 		        </tr>
 		    </thead>
@@ -43,7 +43,7 @@
 							v-else
 							class="dark:text-white">{{ setData(head, body, rowIndex) }}</span>
 		        	</td>
-		            <td v-if="actions" class="uk-text-right">
+		            <td v-if="actions" class="fe-text-right">
 		            	<button
 		            		class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-2 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
 		            		@click="emit('actionButtonClicked', body.actions)">
@@ -176,7 +176,7 @@
 </script>
 
 <style>
-	.uk-table td {
+	.fe-table td {
 	    padding: 12px 14px;
 	    vertical-align: middle;
 	}

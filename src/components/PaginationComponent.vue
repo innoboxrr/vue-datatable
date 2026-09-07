@@ -1,12 +1,12 @@
 <template>
 
-	<ul v-if="length > 3" class="uk-pagination uk-flex-center" uk-margin>
+	<ul v-if="length > 3" class="fe-pagination fe-justify-center" fe-mb>
 
 	    <li v-if="firstLink != null">
 
 	    	<a href="#" @click="emit('go', firstLink)">
 
-	    		<span uk-pagination-previous></span>
+	    		<span fe-page-prev></span>
 
 	    	</a>
 
@@ -15,10 +15,7 @@
 	    <li
 	    	v-for="link in middleLinks"
 	    	:key="link.label"
-	    	:class="{
-	    		'uk-disabled': link.url == null,
-	    		'uk-active': link.active,
-	    	}">
+	    	:class="{ 'fe-disabled': link.url == null, 'fe-active': link.active, }">
 
 	    	<a href="#" @click="emit('go', link.url)">
 
@@ -32,7 +29,7 @@
 
 	    	<a href="#" @click="emit('go', lastLink)">
 
-	    		<span uk-pagination-next></span>
+	    		<span fe-page-next></span>
 
 	    	</a>
 
@@ -73,7 +70,7 @@
 
 <style scoped>
 
-	.uk-pagination > .uk-active > * {
+	.fe-pagination > .fe-active > * {
 	    color: #666;
 	    font-weight: 600;
 	    border-bottom: 3px solid var(--primary-color);

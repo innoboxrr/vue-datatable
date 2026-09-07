@@ -1,9 +1,9 @@
 <template>
 	<div>
 		<div v-if="showTopbar">
-			<div class="uk-container uk-container-expand pt-4">
-				<div uk-grid>
-					<div class="uk-width-expand" v-if="hasActions">
+			<div class="fe-container fe-container-wide pt-4">
+				<div fe-grid>
+					<div class="fe-w-expand" v-if="hasActions">
 						<button
 							class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
 							@click="actionButtonClicked(crudActions)">
@@ -39,13 +39,13 @@
 						</NavDropdownComponent>
 					</div>
 					<div v-else>
-						<div class="uk-width-expand"></div>
+						<div class="fe-w-expand"></div>
 					</div>
-					<div v-if="hasFilter" class="uk-width-auto">
-						<div class="uk-grid-divider uk-child-width-expand uk-text-center" uk-grid>
+					<div v-if="hasFilter" class="fe-w-auto">
+						<div class="fe-grid-divider fe-children-expand fe-text-center" fe-grid>
 						    <div>
 								<span
-						    		class="uk-text-right pointer"
+						    		class="fe-text-right pointer"
 						    		:uk-tooltip="`title: ${'Update results'}`"
 						    		@click="updateFilters">
 									<svg class="w-6 h-6 text-slate-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 20">
@@ -55,7 +55,7 @@
 						    </div>
 							<div>
 								<span
-						    		class="uk-text-right pointer"
+						    		class="fe-text-right pointer"
 						    		uk-toggle="target: .filter-form; animation: uk-animation-scale-up;"
 						    		uk-tooltip="title: Buscar">
 									<svg class="w-6 h-6 text-slate-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 18">
@@ -69,21 +69,17 @@
 			</div>
 			<div
 				v-if="hasFilter"
-				class="filter-form uk-card uk-card-body uk-padding-remove-top"
+				class="filter-form fe-card fe-card-body fe-pt-0"
 				hidden>
 				<slot name="filterForm"></slot>
 			</div>
 		</div>
 		<div
-			class="uk-container uk-container-expand"
-			:class="{
-				'ptb-20': showTopbar
-			}">
+			class="fe-container fe-container-wide"
+			:class="{ 'ptb-20': showTopbar }">
 			<div
-				class="uk-padding-small"
-				:class="{
-					'bg-white p-6 rounded-lg shadow dark:border-slate-700 dark:bg-slate-800': cardWrapper
-				}">
+				class="fe-p-sm"
+				:class="{ 'bg-white p-6 rounded-lg shadow dark:border-slate-700 dark:bg-slate-800': cardWrapper }">
 				<DataTableComponent
 					:actions="hasActions"
 					:data-table="dataTable"
