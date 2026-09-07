@@ -22,7 +22,7 @@
 		    </thead>
 		    <tbody>
 		        <tr
-		        	v-for="body in dataTable.body"
+		        	v-for="(body, rowIndex) in dataTable.body"
 		        	:key="body.id"
 		        	class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
 		        	<td
@@ -32,16 +32,16 @@
 						<template v-if="head.component">
 							<component
 								:is="getComponent(head.component)"
-								v-bind="setData(head, body)"
+								v-bind="setData(head, body, rowIndex)"
 								@callback="head.callback && typeof head.callback === 'function' ? head.callback($event, body) : null" />
 						</template>
 		        		<span
 		        			v-else-if="head.html"
 		        			class="dark:text-white"
-		        			v-html="setData(head, body)"></span>
+		        			v-html="setData(head, body, rowIndex)"></span>
 		        		<span
 							v-else
-							class="dark:text-white">{{ setData(head, body) }}</span>
+							class="dark:text-white">{{ setData(head, body, rowIndex) }}</span>
 		        	</td>
 		            <td v-if="actions" class="uk-text-right">
 		            	<button
@@ -97,6 +97,8 @@
 
 <script setup>
 
+	import { computed } from 'vue'
+
 	import NavDropdownComponent from './NavDropdownComponent.vue'
 	import IconRouteComponent from './IconRouteComponent.vue'
 	import IconLinkComponent from './IconLinkComponent.vue'
@@ -138,25 +140,23 @@
 	 * Copia aislada de cada fila, para que un parser del modelo no pueda
 	 * mutar los datos de la tabla.
 	 *
-	 * Antes se clonaba con JSON dentro de setData(), es decir una vez por
-	 * celda: con 20 filas y 8 columnas eran 160 clonados en cada repintado.
-	 * La cache por fila lo deja en uno.
+	 * Se clonaba con JSON dentro de setData(), es decir una vez por celda: con
+	 * 20 filas y 8 columnas eran 160 clonados en cada repintado. Un clon por
+	 * fila y repintado deja lo mismo en 20.
+	 *
+	 * La cache que hacia eso era un WeakMap de modulo, y eso traia dos
+	 * problemas propios: la compartian todas las tablas de la pagina, y un
+	 * parser que escribiera en su copia la envenenaba para el resto de la vida
+	 * de la aplicacion. Una computed sobre el cuerpo da el mismo ahorro sin
+	 * ninguna de las dos cosas.
 	 */
-	const rowCache = new WeakMap()
+	const rows = computed(() => (props.dataTable.body ?? []).map(
+		(row) => JSON.parse(JSON.stringify(row))
+	))
 
-	const snapshot = (body) => {
+	const setData = (head, body, index) => {
 
-		if (! rowCache.has(body)) {
-			rowCache.set(body, JSON.parse(JSON.stringify(body)))
-		}
-
-		return rowCache.get(body)
-
-	}
-
-	const setData = (head, body) => {
-
-		const data = snapshot(body)
+		const data = rows.value[index] ?? body
 
 		return typeof head.parser === 'function' ? head.parser(data[head.id], data) : data[head.id]
 

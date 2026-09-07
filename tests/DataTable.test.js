@@ -228,3 +228,65 @@ describe('DataTable', () => {
     })
 
 })
+
+describe('aislamiento de las filas', () => {
+
+    /**
+     * El clon de cada fila vivia en un WeakMap de modulo: lo compartian todas
+     * las tablas de la pagina, y un parser que escribiera en su copia la
+     * envenenaba para el resto de la vida de la aplicacion.
+     */
+    it('un parser que muta su fila no toca los datos de la tabla', async () => {
+
+        const rows = [{ id: 1, name: 'Original', actions: [] }]
+
+        axios.mockResolvedValue(page(rows))
+
+        const { wrapper } = await factory({}, makeModel({
+            dataTableHead: () => [
+                {
+                    id: 'name',
+                    value: 'Nombre',
+                    sortable: false,
+                    html: false,
+                    parser: (value, fila) => {
+                        fila.name = 'MUTADO'
+
+                        return String(value).toUpperCase()
+                    },
+                },
+            ],
+        }))
+
+        expect(wrapper.text()).toContain('ORIGINAL')
+        expect(rows[0].name).toBe('Original')
+
+    })
+
+    /**
+     * Dos tablas sobre los mismos objetos de fila compartian los clones.
+     */
+    it('dos tablas sobre las mismas filas no se pisan', async () => {
+
+        const rows = [{ id: 1, name: 'Uno', actions: [] }]
+
+        axios.mockResolvedValue(page(rows))
+
+        const { wrapper: primera } = await factory({}, makeModel({
+            dataTableHead: () => [
+                { id: 'name', value: 'Nombre', sortable: false, parser: (v) => `A:${v}` },
+            ],
+        }))
+
+        const { wrapper: segunda } = await factory({}, makeModel({
+            dataTableHead: () => [
+                { id: 'name', value: 'Nombre', sortable: false, parser: (v) => `B:${v}` },
+            ],
+        }))
+
+        expect(primera.text()).toContain('A:Uno')
+        expect(segunda.text()).toContain('B:Uno')
+
+    })
+
+})
