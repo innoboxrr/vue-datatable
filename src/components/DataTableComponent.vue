@@ -46,8 +46,10 @@
 		            <td v-if="actions" class="fe-text-right">
 		            	<button
 		            		class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-2 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+		            		:popovertarget="`dropdown_${body.id}`"
+		            		:aria-label="'Actions'"
 		            		@click="emit('actionButtonClicked', body.actions)">
-							<i class="fas fa-cogs"></i>
+							<Icon :icon="iconFor('actions')" aria-hidden="true" />
 						</button>
 						<NavDropdownComponent :id="`dropdown_${body.id}`" pos="left">
 							<li
@@ -98,6 +100,8 @@
 <script setup>
 
 	import { computed } from 'vue'
+	import { Icon } from '@iconify/vue'
+	import { iconFor } from 'innoboxrr-form-core'
 
 	import NavDropdownComponent from './NavDropdownComponent.vue'
 	import IconRouteComponent from './IconRouteComponent.vue'
@@ -162,15 +166,9 @@
 
 	}
 
+	// Un popover se cierra solo: no hace falta preguntarle nada a nadie.
 	const closeDropdown = (event) => {
-
-		const dropdown = event.target.closest('.uk-dropdown')
-
-		// UIkit lo aporta la aplicacion anfitriona.
-		if (dropdown) {
-			globalThis.UIkit?.dropdown(dropdown)?.hide(false)
-		}
-
+		event.target.closest('[popover]')?.hidePopover()
 	}
 
 </script>

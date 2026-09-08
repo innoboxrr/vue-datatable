@@ -59,9 +59,10 @@
 								<button
 						    		type="button"
 						    		class="fe-text-right pointer"
-						    		uk-toggle="target: .filter-form; animation: uk-animation-scale-up;"
 						    		data-tooltip="Buscar"
-						    		aria-label="Buscar">
+						    		aria-label="Buscar"
+						    		:aria-expanded="filtersOpen"
+						    		@click="filtersOpen = ! filtersOpen">
 									<svg class="w-6 h-6 text-slate-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 18">
 										<path d="M18.85 1.1A1.99 1.99 0 0 0 17.063 0H2.937a2 2 0 0 0-1.566 3.242L6.99 9.868 7 14a1 1 0 0 0 .4.8l4 3A1 1 0 0 0 13 17l.01-7.134 5.66-6.676a1.99 1.99 0 0 0 .18-2.09Z"/>
 									</svg>
@@ -74,7 +75,7 @@
 			<div
 				v-if="hasFilter"
 				class="filter-form fe-card fe-card-body fe-pt-0"
-				hidden>
+				:hidden="! filtersOpen">
 				<slot name="filterForm"></slot>
 			</div>
 		</div>
@@ -183,6 +184,11 @@
 	 * Se leia de la global `csrf_token`, que la aplicacion anfitriona tenia
 	 * que definir en window: el componente no se podia montar fuera de ella.
 	 */
+	// Abrir un panel es estado de componente, no una instruccion al DOM. Antes
+	// lo hacia uk-toggle buscando `.filter-form` por selector, que es como la
+	// rama Vue y la de React acabaron comportandose distinto.
+	const filtersOpen = ref(false)
+
 	const csrfToken = () => globalThis.csrf_token
 		?? document.querySelector('meta[name="csrf-token"]')?.getAttribute('content')
 		?? ''
@@ -392,14 +398,9 @@
 
 	}
 
+	// Un popover se cierra solo: no hace falta preguntarle nada a nadie.
 	const closeDropdown = (event) => {
-
-		const dropdown = event.target.closest('.uk-dropdown')
-
-		if (dropdown) {
-			globalThis.UIkit?.dropdown(dropdown)?.hide(false)
-		}
-
+		event.target.closest('[popover]')?.hidePopover()
 	}
 
 	watch(() => props.formFilters, () => {

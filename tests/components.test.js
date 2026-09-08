@@ -34,20 +34,25 @@ describe('DisabledLinkComponent', () => {
 
 describe('NavDropdownComponent', () => {
 
-    it('compone las opciones de uk-dropdown', () => {
-        const wrapper = mount(NavDropdownComponent, { props: { pos: 'right', mode: 'hover' } })
+    /**
+     * El menu vive en la capa superior del navegador con el atributo popover:
+     * abrir, cerrar al pulsar fuera y cerrar con Escape los hace el navegador,
+     * sin una linea de JavaScript. El boton lo vincula por id con
+     * popovertarget, que es lo que sustituye a la convencion de UIkit de
+     * engancharse al hermano anterior.
+     */
+    it('es un popover del navegador, no un componente de UIkit', () => {
+        const wrapper = mount(NavDropdownComponent, { props: { id: 'dropdown_1' } })
 
-        const options = wrapper.attributes('uk-dropdown')
-
-        expect(options).toContain('pos: right')
-        expect(options).toContain('mode: hover')
-        expect(options).toContain('animation: uk-animation-slide-top-small')
+        expect(wrapper.attributes('popover')).toBeDefined()
+        expect(wrapper.attributes('id')).toBe('dropdown_1')
+        expect(wrapper.attributes('uk-dropdown')).toBeUndefined()
     })
 
     it('renderiza el contenido del slot dentro de la lista', () => {
-        const wrapper = mount(NavDropdownComponent, { slots: { default: '<li>uno</li>' } })
+        const wrapper = mount(NavDropdownComponent, { props: { id: 'dropdown_1' }, slots: { default: '<li>uno</li>' } })
 
-        expect(wrapper.find('ul.fe-menu li').text()).toBe('uno')
+        expect(wrapper.find('ul.fe-menu-list li').text()).toBe('uno')
     })
 
 })
