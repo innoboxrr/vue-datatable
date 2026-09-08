@@ -3,7 +3,8 @@
 	<a
 		href="#"
 		class="disabled-link block px-4 py-2 dark:hover:text-white dark:text-slate-400"
-		:uk-tooltip="`title: ${ 'This action is not authorized' }; pos:right`">
+		data-tooltip="This action is not authorized"
+		data-tooltip-pos="right">
 
 		<Icon
 			v-if="showIcon"

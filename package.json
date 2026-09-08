@@ -1,6 +1,6 @@
 {
   "name": "innoboxrr-vue-datatable",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "description": "Datatable para vue3",
   "main": "index.js",
   "scripts": {
@@ -40,7 +40,7 @@
     "*.vue"
   ],
   "peerDependencies": {
-    "innoboxrr-form-core": "^2.1.0",
+    "innoboxrr-form-core": "^2.2.0",
     "vue": "^3.5.0",
     "vue-router": "^4.5.0"
   },

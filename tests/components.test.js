@@ -18,7 +18,8 @@ describe('DisabledLinkComponent', () => {
         const wrapper = mount(DisabledLinkComponent, { props: { text: 'Editar' } })
 
         expect(wrapper.text()).toContain('Editar')
-        expect(wrapper.attributes('uk-tooltip')).toContain('This action is not authorized')
+        expect(wrapper.attributes('data-tooltip')).toBe('This action is not authorized')
+        expect(wrapper.attributes('data-tooltip-pos')).toBe('right')
     })
 
     it('muestra el icono solo si se le pasa uno', () => {
