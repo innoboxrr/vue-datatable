@@ -22,11 +22,11 @@ describe('DisabledLinkComponent', () => {
     })
 
     it('muestra el icono solo si se le pasa uno', () => {
-        expect(mount(DisabledLinkComponent, { props: { text: 'x' } }).find('.uk-icon').exists()).toBe(false)
+        expect(mount(DisabledLinkComponent, { props: { text: 'x' } }).find('svg').exists()).toBe(false)
 
-        const wrapper = mount(DisabledLinkComponent, { props: { text: 'x', icon: 'trash' } })
+        const wrapper = mount(DisabledLinkComponent, { props: { text: 'x', icon: 'delete' } })
 
-        expect(wrapper.find('.uk-icon').attributes('uk-icon')).toBe('trash')
+        expect(wrapper.find('svg').exists()).toBe(true)
     })
 
 })
@@ -57,13 +57,18 @@ describe('IconLinkComponent', () => {
         props: { text: 'Ver', icon: 'eye', ...props },
     })
 
-    it('compone el atributo de icono con su ratio', () => {
-        expect(factory().find('.uk-icon').attributes('uk-icon')).toBe('icon: eye; ratio: 1;')
-        expect(factory({ ratio: 2 }).find('.uk-icon').attributes('uk-icon')).toBe('icon: eye; ratio: 2;')
+    /**
+     * El nombre semantico lo resuelve el mapa de innoboxrr-form-core, que es
+     * el mismo que usa la rama React. Aqui solo se comprueba que el icono se
+     * pinta y que respeta el ratio.
+     */
+    it('pinta el icono', () => {
+        expect(factory().find('svg').exists()).toBe(true)
     })
 
-    it('escala el tamano de fuente segun el ratio', () => {
-        expect(factory({ ratio: 2 }).find('.uk-icon').attributes('style')).toContain('font-size: 32px')
+    it('escala el tamano segun el ratio, que era el multiplicador de UIkit sobre 16px', () => {
+        expect(factory().find('svg').attributes('width')).toBe('16')
+        expect(factory({ ratio: 2 }).find('svg').attributes('width')).toBe('32')
     })
 
     it('usa # y _self por defecto', () => {

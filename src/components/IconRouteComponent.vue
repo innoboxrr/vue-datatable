@@ -4,10 +4,12 @@
 		:to="pathObject"
 		class="block px-4 py-2 dark:hover:text-white dark:text-slate-400">
 
-		<span
-			class="fe-mr-sm uk-icon"
-			:uk-icon="iconAttr"
-			:style="iconStyle"></span>
+		<Icon
+			class="fe-mr-sm"
+			:icon="resolved"
+			:width="size"
+			:height="size"
+			aria-hidden="true" />
 
 		<span :class="textClass">{{ text }}</span>
 
@@ -17,7 +19,9 @@
 
 <script setup>
 
-	import { computed } from 'vue'
+	import { computed, onScopeDispose, ref } from 'vue'
+	import { Icon } from '@iconify/vue'
+	import { iconFor, onIconChange } from 'innoboxrr-form-core'
 
 	const props = defineProps({
 		name: {
@@ -62,10 +66,19 @@
 		query: props.query,
 	}))
 
-	const iconAttr = computed(() => `icon: ${props.icon}; ratio: ${props.ratio};`)
+	// Un cambio de mapa en caliente repinta lo ya montado.
+	const version = ref(0)
 
-	const iconStyle = computed(() => ({
-		fontSize: (props.ratio * 16) + 'px'
-	}))
+	onScopeDispose(onIconChange(() => version.value++))
+
+	const resolved = computed(() => {
+		version.value
+
+		return iconFor(props.icon)
+	})
+
+	// `ratio` era el multiplicador de UIkit sobre 16px. Se conserva para no
+	// romper a quien ya lo pasa.
+	const size = computed(() => props.ratio * 16)
 
 </script>

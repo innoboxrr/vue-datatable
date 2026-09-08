@@ -5,10 +5,12 @@
 		:href="link"
 		:target="target">
 
-		<span
-			class="fe-mr-sm uk-icon"
-			:uk-icon="iconAttr"
-			:style="iconStyle"></span>
+		<Icon
+			class="fe-mr-sm"
+			:icon="resolved"
+			:width="size"
+			:height="size"
+			aria-hidden="true" />
 
 		<span :class="textClass">{{ text }}</span>
 
@@ -18,7 +20,20 @@
 
 <script setup>
 
-	import { computed, nextTick, onMounted } from 'vue'
+	/**
+	 * Antes esto pintaba `<span class="uk-icon" uk-icon="icon: fa-plus">` y
+	 * llamaba a `globalThis.UIkit.update()` al montar. Para que ese icono
+	 * apareciera hacian falta tres dependencias que ningun package.json
+	 * declaraba: uikit, fontawesome y uikit-custom-icons, que hacia de puente
+	 * entre las dos.
+	 *
+	 * Ahora el nombre se resuelve contra el mapa de innoboxrr-form-core, que
+	 * es el mismo que usa la rama React.
+	 */
+
+	import { computed, onScopeDispose, ref } from 'vue'
+	import { Icon } from '@iconify/vue'
+	import { iconFor, onIconChange } from 'innoboxrr-form-core'
 
 	const props = defineProps({
 		link: {
@@ -48,18 +63,19 @@
 		}
 	})
 
-	onMounted(() => {
-		nextTick(() => {
-			// UIkit lo aporta la aplicacion anfitriona; sin la guarda el
-			// componente no se puede montar en un entorno de pruebas ni en SSR.
-			globalThis.UIkit?.update()
-		})
+	// Un cambio de mapa en caliente repinta lo ya montado.
+	const version = ref(0)
+
+	onScopeDispose(onIconChange(() => version.value++))
+
+	const resolved = computed(() => {
+		version.value
+
+		return iconFor(props.icon)
 	})
 
-	const iconAttr = computed(() => `icon: ${props.icon}; ratio: ${props.ratio};`)
-
-	const iconStyle = computed(() => ({
-		fontSize: (props.ratio * 16) + 'px'
-	}))
+	// `ratio` era el multiplicador de UIkit sobre 16px. Se conserva para no
+	// romper a quien ya lo pasa.
+	const size = computed(() => props.ratio * 16)
 
 </script>
