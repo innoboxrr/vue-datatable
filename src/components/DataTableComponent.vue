@@ -1,184 +1,225 @@
 <template>
-	<div class="sm:rounded-lg overflow-x-auto">
-		<table class="min-w-full w-full text-sm text-left text-slate-500 dark:text-slate-400 p-4">
-		    <thead
-		    	v-if="showTableHeader"
-		    	class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 rounded-sm">
-		        <tr>
-		            <th
-		            	v-for="head in dataTable.head"
-		            	:key="head.id"
-		            	:id="`th_${head.id}`"
-		            	class="px-6 py-3"
-		            	scope="col"
-		            	:class="{pointer: head.sortable}"
-		            	@click="emit('sortColumn', head)">
-		            	{{ head.value }}
-		            </th>
-		            <th
-		            	class="fe-shrink"
-		            	v-if="actions"></th>
-		        </tr>
-		    </thead>
-		    <tbody>
-		        <tr
-		        	v-for="(body, rowIndex) in dataTable.body"
-		        	:key="body.id"
-		        	class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-		        	<td
-		        		v-for="head in dataTable.head"
-		        		:key="head.id"
-		        		class="px-6 py-4">
-						<template v-if="head.component">
-							<component
-								:is="getComponent(head.component)"
-								v-bind="setData(head, body, rowIndex)"
-								@callback="head.callback && typeof head.callback === 'function' ? head.callback($event, body) : null" />
-						</template>
-		        		<span
-		        			v-else-if="head.html"
-		        			class="dark:text-white"
-		        			v-html="setData(head, body, rowIndex)"></span>
-		        		<span
-							v-else
-							class="dark:text-white">{{ setData(head, body, rowIndex) }}</span>
-		        	</td>
-		            <td v-if="actions" class="fe-text-right">
-		            	<button
-		            		class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-2 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
-		            		:popovertarget="`dropdown_${body.id}`"
-		            		:aria-label="'Actions'"
-		            		@click="emit('actionButtonClicked', body.actions)">
-							<Icon :icon="iconFor('actions')" aria-hidden="true" />
-						</button>
-						<NavDropdownComponent :id="`dropdown_${body.id}`" pos="left">
-							<li
-								v-for="action in body.actions"
-								:key="action.name"
-								class="hover:bg-slate-100 dark:hover:bg-slate-600 px-2 py-1">
-								<template v-if="action.route && !action?.link">
-									<IconRouteComponent
-										v-if="action.policy"
-		                                :name="action.params.to.name"
-		                                :params="{...action.params.to.params, ...extraParams}"
-		                                :query="action.params.to.query ? {...action.params.to.query, ...extraQuery} : {...extraQuery}"
-		                                :icon="action.icon"
-		                                :text="action.name" />
-		                            <DisabledLinkComponent
-		                            	v-else
-		                            	:icon="action.icon"
-		                            	:text="action.name"/>
-								</template>
-								<template v-else-if="action.route && action.link">
-									<IconLinkComponent
-										v-if="action.policy"
-										:link="action.params.link"
-										:target="action.params.target"
-										:icon="action.icon"
-										:text="action.name" />
-								</template>
-								<template v-else>
-									<IconLinkComponent
-										v-if="action.policy"
-										:icon="action.icon"
-										:text="action.name"
-										@click.prevent="emit('actionClicked', action), closeDropdown($event)" />
-									<DisabledLinkComponent
-		                            	v-else
-		                            	:icon="action.icon"
-		                            	:text="action.name"/>
-								</template>
-							</li>
-						</NavDropdownComponent>
-		            </td>
-		        </tr>
-		    </tbody>
-		</table>
-	</div>
+
+    <div :class="theme.tableContainer">
+
+        <table :class="[theme.table, theme.tableSticky]" :aria-busy="loading ? 'true' : 'false'">
+
+            <thead v-if="showTableHeader">
+                <tr>
+                    <th v-if="selectable" scope="col" :class="theme.tableSelect">
+                        <input
+                            type="checkbox"
+                            :class="theme.checkbox"
+                            :aria-label="labels.selectAll"
+                            :checked="allSelected"
+                            :indeterminate="someSelected"
+                            :disabled="rows.length === 0"
+                            @change="table.toggleAllPageRowsSelected($event.target.checked)">
+                    </th>
+
+                    <th
+                        v-for="column in head"
+                        :id="`th_${column.id}`"
+                        :key="column.id"
+                        scope="col"
+                        :class="column.numeric ? theme.tableNumeric : null"
+                        :aria-sort="ariaSort(column, orderBy, sort)">
+                        <button
+                            v-if="column.sortable === true"
+                            type="button"
+                            :class="theme.tableSort"
+                            @click="emit('sortColumn', column)">
+                            <span>{{ column.value }}</span>
+                            <IconComponent :name="sortIcon(column, orderBy, sort)" :size="12" />
+                        </button>
+                        <template v-else>{{ column.value }}</template>
+                    </th>
+
+                    <th v-if="actions" scope="col" :class="theme.tableSelect" :aria-label="labels.actions" />
+                </tr>
+            </thead>
+
+            <tbody>
+
+                <!-- Primera carga: la forma de las filas, mientras llegan. -->
+                <template v-if="loading && rows.length === 0">
+                    <tr v-for="n in SKELETON_ROWS" :key="`skeleton-${n}`" data-skeleton="true">
+                        <td v-if="selectable" :class="theme.tableSelect" />
+                        <td v-for="column in head" :key="column.id">
+                            <SkeletonComponent />
+                        </td>
+                        <td v-if="actions" :class="theme.tableSelect" />
+                    </tr>
+                </template>
+
+                <!-- Sin filas se dice por qué: no es lo mismo vacío que prohibido. -->
+                <tr v-else-if="rows.length === 0">
+                    <td :colspan="colspan" :class="theme.tableEmpty">
+                        <template v-if="error">
+                            <span role="alert">{{ error.message }}</span>
+                            <button
+                                v-if="error.retryable"
+                                type="button"
+                                :class="theme.buttonLink"
+                                @click="emit('retry')">{{ labels.retry }}</button>
+                        </template>
+                        <template v-else>{{ labels.empty }}</template>
+                    </td>
+                </tr>
+
+                <template v-else>
+                    <tr
+                        v-for="row in table.getRowModel().rows"
+                        :key="row.id"
+                        :data-selected="row.getIsSelected() ? 'true' : undefined">
+
+                        <td v-if="selectable" :class="theme.tableSelect">
+                            <input
+                                type="checkbox"
+                                :class="theme.checkbox"
+                                :aria-label="`${labels.selectRow} ${row.original.id}`"
+                                :checked="row.getIsSelected()"
+                                @click="row.getToggleSelectedHandler()($event)">
+                        </td>
+
+                        <td
+                            v-for="cell in row.getVisibleCells()"
+                            :key="cell.id"
+                            :class="headOf(cell).numeric ? theme.tableNumeric : null">
+                            <component
+                                :is="componentFor(cell)"
+                                v-if="componentFor(cell)"
+                                v-bind="componentProps(valueFor(cell, row))"
+                                @callback="onCallback(cell, row, $event)" />
+                            <span v-else-if="headOf(cell).html" v-html="valueFor(cell, row)" />
+                            <template v-else>{{ valueFor(cell, row) }}</template>
+                        </td>
+
+                        <td v-if="actions" :class="theme.tableSelect">
+                            <MenuComponent
+                                :items="itemsFor(row.original)"
+                                :label="`${labels.rowActions} ${row.original.id}`"
+                                :before-open="() => prepareRow(row.original.id)" />
+                        </td>
+
+                    </tr>
+                </template>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
 </template>
 
 <script setup>
 
-	import { computed } from 'vue'
-	import { Icon } from '@iconify/vue'
-	import { iconFor } from 'innoboxrr-form-core'
+    /**
+     * La tabla propiamente dicha, sobre una instancia de TanStack Table.
+     *
+     * El menú de cada fila espera a conocer los permisos antes de abrirse.
+     * Antes se abría al instante con todo deshabilitado y se habilitaba cuando
+     * llegaba la respuesta —si llegaba: un fallo se reintentaba en silencio—,
+     * y el usuario veía parpadear lo que no podía hacer.
+     */
 
-	import NavDropdownComponent from './NavDropdownComponent.vue'
-	import IconRouteComponent from './IconRouteComponent.vue'
-	import IconLinkComponent from './IconLinkComponent.vue'
-	import DisabledLinkComponent from './DisabledLinkComponent.vue'
+    import { computed } from 'vue'
+    import IconComponent from 'innoboxrr-form-elements/src/IconComponent.vue'
+    import MenuComponent from 'innoboxrr-form-elements/src/MenuComponent.vue'
+    import SkeletonComponent from 'innoboxrr-form-elements/src/SkeletonComponent.vue'
 
-	const props = defineProps({
-		actions: {
-			type: Boolean,
-			default: false
-		},
-		dataTable: {
-			type: [Object, Boolean],
-			required: true
-		},
-		// Vue 3 exige factoria en los defaults de objeto.
-		extraParams: {
-			type: Object,
-			default: () => ({})
-		},
-		extraQuery: {
-			type: Object,
-			default: () => ({})
-		},
-		showTableHeader: {
-			type: Boolean,
-			default: true,
-		},
-		dataTableComponents: {
-			type: Object,
-			default: () => ({})
-		}
-	})
+    import useTheme from '../useTheme.js'
+    import { DEFAULT_LABELS, ariaSort, cellValue, componentProps, sortIcon } from '../table.js'
 
-	const emit = defineEmits(['sortColumn', 'actionButtonClicked', 'actionClicked'])
+    const SKELETON_ROWS = 5
 
-	const getComponent = (componentName) => props.dataTableComponents[componentName] || null
+    const props = defineProps({
+        table: {
+            type: Object,
+            required: true,
+        },
+        head: {
+            type: Array,
+            default: () => [],
+        },
+        rows: {
+            type: Array,
+            default: () => [],
+        },
+        clones: {
+            type: Array,
+            default: () => [],
+        },
+        loading: {
+            type: Boolean,
+            default: false,
+        },
+        error: {
+            type: Object,
+            default: null,
+        },
+        actions: {
+            type: Boolean,
+            default: false,
+        },
+        selectable: {
+            type: Boolean,
+            default: false,
+        },
+        showTableHeader: {
+            type: Boolean,
+            default: true,
+        },
+        dataTableComponents: {
+            type: Object,
+            default: () => ({}),
+        },
+        labels: {
+            type: Object,
+            default: () => DEFAULT_LABELS,
+        },
+        orderBy: {
+            type: String,
+            default: null,
+        },
+        sort: {
+            type: Object,
+            default: () => ({}),
+        },
+        itemsFor: {
+            type: Function,
+            default: () => [],
+        },
+        prepareRow: {
+            type: Function,
+            default: async () => {},
+        },
+    })
 
-	/**
-	 * Copia aislada de cada fila, para que un parser del modelo no pueda
-	 * mutar los datos de la tabla.
-	 *
-	 * Se clonaba con JSON dentro de setData(), es decir una vez por celda: con
-	 * 20 filas y 8 columnas eran 160 clonados en cada repintado. Un clon por
-	 * fila y repintado deja lo mismo en 20.
-	 *
-	 * La cache que hacia eso era un WeakMap de modulo, y eso traia dos
-	 * problemas propios: la compartian todas las tablas de la pagina, y un
-	 * parser que escribiera en su copia la envenenaba para el resto de la vida
-	 * de la aplicacion. Una computed sobre el cuerpo da el mismo ahorro sin
-	 * ninguna de las dos cosas.
-	 */
-	const rows = computed(() => (props.dataTable.body ?? []).map(
-		(row) => JSON.parse(JSON.stringify(row))
-	))
+    const emit = defineEmits(['sortColumn', 'retry'])
 
-	const setData = (head, body, index) => {
+    const theme = useTheme()
 
-		const data = rows.value[index] ?? body
+    const colspan = computed(() => props.head.length + (props.selectable ? 1 : 0) + (props.actions ? 1 : 0))
 
-		return typeof head.parser === 'function' ? head.parser(data[head.id], data) : data[head.id]
+    const allSelected = computed(() => props.rows.length > 0 && props.table.getIsAllPageRowsSelected())
+    const someSelected = computed(() => props.table.getIsSomePageRowsSelected() && ! allSelected.value)
 
-	}
+    const headOf = (cell) => cell.column.columnDef.meta?.head ?? {}
 
-	// Un popover se cierra solo: no hace falta preguntarle nada a nadie.
-	// La llamada es opcional porque hidePopover no existe en un navegador
-	// anterior a la Popover API —ni en jsdom—, y un menu que no cierra es
-	// mejor que una excepcion.
-	const closeDropdown = (event) => {
-		event.target.closest('[popover]')?.hidePopover?.()
-	}
+    const componentFor = (cell) => {
+        const name = headOf(cell).component
+
+        return name ? (props.dataTableComponents[name] ?? null) : null
+    }
+
+    const valueFor = (cell, row) => cellValue(headOf(cell), props.clones[row.index] ?? row.original)
+
+    const onCallback = (cell, row, payload) => {
+        const callback = headOf(cell).callback
+
+        return typeof callback === 'function' ? callback(payload, row.original) : null
+    }
 
 </script>
-
-<style>
-	.fe-table td {
-	    padding: 12px 14px;
-	    vertical-align: middle;
-	}
-</style>

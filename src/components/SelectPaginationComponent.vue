@@ -1,110 +1,95 @@
 <template>
 
-	<div class="pagination" fe-grid>
+    <div :class="theme.tableFooter">
 
-		<div class="fe-w-auto">
+        <span>{{ summaryText }}</span>
 
-			<ul class="fe-pagination fe-justify-start fe-mt-md" fe-mb>
+        <div v-if="last > 1" :class="theme.tablePager">
 
-			    <li>
+            <button
+                type="button"
+                :class="theme.iconButton"
+                :aria-label="text.previous"
+                :disabled="current <= 1"
+                @click="go(current - 1)">
+                <IconComponent name="previous" :size="14" />
+            </button>
 
-			    	<span v-if="meta.total > 0">
+            <select
+                :class="theme.select"
+                :aria-label="text.page"
+                :value="current"
+                @change="go($event.target.value)">
+                <option v-for="page in last" :key="page" :value="page">{{ page }}</option>
+            </select>
 
-			    		{{ 'Showing' }} {{ meta.from }} {{ 'to' }} {{ meta.to }} {{ 'of' }} {{ meta.total }} {{ 'entries' }}
+            <span>{{ text.of }} {{ last }}</span>
 
-			    	</span>
+            <button
+                type="button"
+                :class="theme.iconButton"
+                :aria-label="text.next"
+                :disabled="current >= last"
+                @click="go(current + 1)">
+                <IconComponent name="next" :size="14" />
+            </button>
 
-			    	<span v-else>{{ ('No results found') }}</span>
+        </div>
 
-			    </li>
-
-			</ul>
-
-		</div>
-
-		<div class="fe-w-expand">
-
-			<ul class="fe-pagination fe-justify-end fe-mt-md" fe-mb>
-
-			    <!-- Prev -->
-			    <li v-if="currentPage > 1">
-
-			    	<a href="#" @click="prevPage()">
-
-			    		<span fe-page-prev></span>
-
-			    	</a>
-
-			    </li>
-
-			    <li>
-			    	<select
-			    		class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-			    		v-model="currentPage">
-
-			    		<option
-			    			v-for="page in meta.last_page"
-			    			:key="'page_' + page"
-			    			:value="page">{{ page }}</option>
-
-			    	</select>
-			    </li>
-
-			    <!-- Next -->
-			    <li v-if="currentPage < meta.last_page">
-
-			    	<a href="#" @click="nextPage()">
-
-			    		<span fe-page-next></span>
-
-			    	</a>
-
-			    </li>
-
-			</ul>
-
-		</div>
-
-	</div>
+    </div>
 
 </template>
 
 <script setup>
 
-	import { ref, watch } from 'vue'
+    /**
+     * El pie de la tabla: cuántos registros se ven y en qué página se está.
+     *
+     * No guarda la página. Antes tenía su propia copia: al reiniciar los
+     * filtros el padre volvía a la 1, el paginador se enteraba después y la
+     * devolvía, y eso era una segunda petición idéntica.
+     */
 
-	const props = defineProps({
+    import { computed } from 'vue'
+    import IconComponent from 'innoboxrr-form-elements/src/IconComponent.vue'
 
-		meta: {
-			type: Object,
-			required: true
-		},
+    import useTheme from '../useTheme.js'
+    import { DEFAULT_LABELS, summary } from '../table.js'
 
-		links: {
-			type: Object,
-			required: true
-		}
+    const props = defineProps({
+        meta: {
+            type: Object,
+            default: () => ({}),
+        },
+        // Se sigue aceptando para no romper a quien lo pasa; la página sale de
+        // `meta`.
+        links: {
+            type: [Array, Object],
+            default: () => [],
+        },
+        labels: {
+            type: Object,
+            default: () => ({}),
+        },
+    })
 
-	})
+    const emit = defineEmits(['updatePage'])
 
-	const emit = defineEmits(['updatePage'])
+    const theme = useTheme()
 
-	const currentPage = ref(props.meta.current_page ?? 1)
+    const text = computed(() => ({ ...DEFAULT_LABELS, ...props.labels }))
 
-	// El select nacia siempre en 1 y no se enteraba de los cambios de pagina
-	// hechos desde fuera (por ejemplo al reiniciar los filtros).
-	watch(() => props.meta.current_page, (page) => {
+    const current = computed(() => Number(props.meta?.current_page ?? 1))
+    const last = computed(() => Number(props.meta?.last_page ?? 1))
 
-		if (page != null && page !== currentPage.value) {
-			currentPage.value = page
-		}
+    const summaryText = computed(() => summary(props.meta ?? {}, text.value))
 
-	})
+    const go = (value) => {
+        const page = Number(value)
 
-	watch(currentPage, (page) => emit('updatePage', page))
-
-	const prevPage = () => currentPage.value--
-
-	const nextPage = () => currentPage.value++
+        if (page >= 1 && page <= last.value && page !== current.value) {
+            emit('updatePage', page)
+        }
+    }
 
 </script>

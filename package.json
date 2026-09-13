@@ -40,18 +40,20 @@
     "*.vue"
   ],
   "peerDependencies": {
-    "innoboxrr-form-core": "^2.3.0",
+    "innoboxrr-form-core": "^2.6.0",
+    "innoboxrr-form-elements": "^6.4.0",
     "vue": "^3.5.0",
     "vue-router": "^4.5.0"
   },
   "dependencies": {
-    "@floating-ui/dom": "^1.8.0",
-    "@iconify/vue": "^5.0.0",
+    "@tanstack/vue-table": "^9.2.4",
     "axios": "^1.7.0"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^6.0.0",
     "@vue/test-utils": "^2.4.6",
+    "innoboxrr-form-core": "^2.6.0",
+    "innoboxrr-form-elements": "^6.4.0",
     "jsdom": "^25.0.0",
     "vite": "^7.1.0",
     "vitest": "^3.0.0",
