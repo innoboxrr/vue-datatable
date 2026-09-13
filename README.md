@@ -101,9 +101,11 @@ export const setFilters = (filters) => filters
 // Opcionales
 export const dataTableComponents = () => ({ CopyLink })
 export const bulkActions = () => [
-    { id: 'delete', name: 'Borrar', icon: 'delete', callback: 'bulkDelete', danger: true },
+    { id: 'delete', name: 'Borrar', icon: 'delete', callback: 'bulkDelete', danger: true, success: 'Borrados' },
+    { id: 'publish', name: 'Publicar', callback: 'bulkUpdate', params: { status: 'published' } },
 ]
 export const bulkDelete = (ids, rows) => { /* … */ }
+export const bulkUpdate = (ids, rows, data) => { /* … */ }
 ```
 
 - **Acciones.** `route: true` navega a `params.to` con vue-router;

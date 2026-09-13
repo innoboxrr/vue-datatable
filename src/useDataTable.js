@@ -271,7 +271,9 @@ export default function useDataTable(props, { navigate = null, labels = core.DEF
 
     /**
      * Una acción masiva recibe los ids seleccionados —también los de otras
-     * páginas— y las filas cargadas que están entre ellos.
+     * páginas—, las filas cargadas que están entre ellos y sus `params`. Con
+     * los params, una misma función sirve para varias acciones: marcar como
+     * publicado y marcar como borrador son la misma llamada con otro valor.
      */
     const runBulk = async (action) => {
         if (typeof props.model[action.callback] !== 'function') {
@@ -284,7 +286,7 @@ export default function useDataTable(props, { navigate = null, labels = core.DEF
         const loaded = table.getSelectedRowModel().rows.map((row) => row.original)
 
         try {
-            await props.model[action.callback](ids, loaded)
+            await props.model[action.callback](ids, loaded, action.params ?? {})
         } catch (failure) {
             if (! core.isCancelled(failure)) {
                 notifyError(core.describeError(failure, text(), text().actionFailed).message)
