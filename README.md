@@ -63,7 +63,7 @@ import 'innoboxrr-form-core/styles'
 | Prop | Por defecto | |
 |---|---|---|
 | `dataUrl`, `policyUrl` | — | Obligatorias. |
-| `dataMethod`, `policyMethod` | `'post'` | `get` manda `params`; `post`, `data`. |
+| `dataMethod`, `policyMethod` | `'post'` | `get` manda `params`, sin el token CSRF; `post`, `data`, con `_token`. |
 | `model` | — | El contrato del modelo (abajo). |
 | `formFilters` | `{}` | Un cambio vuelve a la primera página. |
 | `externalFilters` | `{}` | Un cambio recarga sin cambiar de página. |
